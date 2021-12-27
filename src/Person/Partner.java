@@ -1,6 +1,8 @@
 package Person;
 
-public class Partner {
+import java.io.Serializable;
+
+public class Partner implements Serializable {
 
 	private final String Name;
 	private final String Surname;

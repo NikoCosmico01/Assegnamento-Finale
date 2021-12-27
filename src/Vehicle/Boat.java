@@ -1,6 +1,8 @@
 package Vehicle;
 
-public class Boat {
+import java.io.Serializable;
+
+public class Boat implements Serializable{
 	
 	private final String Name;
 	private final Integer ID;

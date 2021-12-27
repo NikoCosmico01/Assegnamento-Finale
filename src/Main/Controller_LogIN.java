@@ -2,8 +2,9 @@ package Main;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
+import Socket.Client;
 import Person.Partner;
+import Socket.Server;
 import Vehicle.Boat;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -33,18 +34,18 @@ public class Controller_LogIN {
 	private Scene scene;
 	private Parent rootParent;	
 	
-	public void login (ActionEvent event) throws SQLException, IOException{
+	public void login (ActionEvent event) throws SQLException, IOException, ClassNotFoundException{
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
-		Link.initialize();
+		Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
+		Client.os.flush();
+		Partner P = (Partner) Client.is.readObject();
 		
-		Partner P = new Partner();	
-		
-		P = Link.checkLogin(userName, passWord);
+		//P = Server.checkLogin(userName, passWord);
 		
 		if (P != null) {
-			System.out.println("Hello" + P.getName());
+			System.out.println("Hello " + P.getName());
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
 			rootParent = loader.load();
 			Controller_Partner Partner = loader.getController();
@@ -54,14 +55,14 @@ public class Controller_LogIN {
 			stage.setScene(scene);
 			Platform.runLater( () -> rootParent.requestFocus() );
 			stage.show();
-			} else {
-				error.setTextFill(Color.WHITE);
-				error.setText("Wrong Username Or Password ");
-				error.setVisible(true);
-				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-				visiblePause.setOnFinished(Event -> error.setVisible(false));
-				visiblePause.play();
-			}
+		} else {
+			error.setTextFill(Color.WHITE);
+			error.setText("Wrong Username Or Password ");
+			error.setVisible(true);
+			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+			visiblePause.setOnFinished(Event -> error.setVisible(false));
+			visiblePause.play();
+		}
 	}
 	
 }
