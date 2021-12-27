@@ -37,8 +37,12 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
-		Partner P = new Partner();
+		Link.initialize();
+		
+		Partner P = new Partner();	
+		
 		P = Link.checkLogin(userName, passWord);
+		
 		if (P != null) {
 			System.out.println("Hello" + P.getName());
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));

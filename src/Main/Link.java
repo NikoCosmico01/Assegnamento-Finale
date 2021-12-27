@@ -11,9 +11,14 @@ import Person.Partner;
 import Vehicle.Boat;
 
 public class Link {
-
+	
+	private static Connection cn;
+	
+	public static void initialize() throws SQLException {
+		cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sailingclub?user=root&password=");
+	}
+	
 	public static Partner checkLogin(String userName, String passWord) throws SQLException {
-		Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sailingclub?user=root&password=");
 		Statement stmt = cn.createStatement();
 		try {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Partner;");
@@ -27,12 +32,11 @@ public class Link {
 		} catch (SQLException e) {
 			System.out.println("Errore:" + e.getMessage());
 		}
-		cn.close();
+		//cn.close();
 		return null;
 	}
 	
 	public static ArrayList<Boat> retrieveBoats(String CF) throws SQLException {
-		Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sailingclub?user=root&password=");
 		Statement stmt = cn.createStatement();
 		try {
 			ArrayList<Boat> List = new ArrayList<Boat>();
@@ -45,7 +49,7 @@ public class Link {
 		} catch (SQLException e) {
 			System.out.println("Errore:" + e.getMessage());
 		}
-		cn.close();
+		//cn.close();
 		return null;
 	}
 
