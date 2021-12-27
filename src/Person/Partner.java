@@ -42,7 +42,7 @@ public class Partner {
 		return this.PassWord;
 	}
 
-	public String get_CF() {
+	public String getCF() {
 		return this.CF;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import Person.Partner;
+import Vehicle.Boat;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -32,7 +33,7 @@ public class Controller_LogIN {
 	private Scene scene;
 	private Parent rootParent;	
 	
-	public void login (ActionEvent event) throws SQLException{
+	public void login (ActionEvent event) throws SQLException, IOException{
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
@@ -40,15 +41,15 @@ public class Controller_LogIN {
 		P = Link.checkLogin(userName, passWord);
 		if (P != null) {
 			System.out.println("Hello" + P.getName());
-				/*FXMLLoader loader = new FXMLLoader(getClass().getResource("User.fxml"));
-				rootParent = loader.load();
-				Controller_User User = loader.getController();
-				User.initialize(link, U, link.getArrayProduct());
-				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-				scene = new Scene(rootParent);
-				stage.setScene(scene);
-				Platform.runLater( () -> rootParent.requestFocus() );
-				stage.show();*/
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
+			rootParent = loader.load();
+			Controller_Partner Partner = loader.getController();
+			Partner.initialize(P.getCF());
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(rootParent);
+			stage.setScene(scene);
+			Platform.runLater( () -> rootParent.requestFocus() );
+			stage.show();
 			} else {
 				error.setTextFill(Color.WHITE);
 				error.setText("Wrong Username Or Password ");

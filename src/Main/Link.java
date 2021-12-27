@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
 import Person.Partner;
+import Vehicle.Boat;
 
 public class Link {
 
@@ -27,4 +30,23 @@ public class Link {
 		cn.close();
 		return null;
 	}
+	
+	public static ArrayList<Boat> retrieveBoats(String CF) throws SQLException {
+		Connection cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/sailingclub?user=root&password=");
+		Statement stmt = cn.createStatement();
+		try {
+			ArrayList<Boat> List = new ArrayList<Boat>();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE CF_Owner = \""+ CF + "\"");
+			while (rs.next() == true) {
+				Boat B = new Boat(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Length"),rs.getString("Subscription"));
+				List.add(B);
+			}
+			return List;
+		} catch (SQLException e) {
+			System.out.println("Errore:" + e.getMessage());
+		}
+		cn.close();
+		return null;
+	}
+
 }
