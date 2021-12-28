@@ -1,4 +1,4 @@
-package Person;
+package Event;
 
 public class Competition {
 

@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="CFText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fitHeight="125.0" fitWidth="298.0" layoutX="52.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
@@ -53,9 +52,9 @@
       <PasswordField fx:id="ConfirmText" layoutX="126.0" layoutY="470.0" />
       <TextField layoutX="220.0" layoutY="222.0" />
       <TextField fx:id="AdressText" layoutX="220.0" layoutY="272.0" />
-      <Label layoutX="161.0" layoutY="321.0" text="UserName">
+      <Label layoutX="166.0" layoutY="326.0" text="UserName">
          <font>
-            <Font name="System Bold" size="16.0" />
+            <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <TextField fx:id="UserNameText" layoutX="126.0" layoutY="346.0" />
