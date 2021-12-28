@@ -13,15 +13,13 @@ public class Client {
 	private static final int SERVER_PORT = 9090;
 	public static ObjectInputStream is;
 	public static DataOutputStream os;
-	public static DataInputStream isByte;
 	
 	public static void main(String[] args) throws IOException{
-		try (Socket socket = new Socket (SERVER_IP, SERVER_PORT)) {
-			is = new ObjectInputStream(socket.getInputStream());
-			isByte = new DataInputStream(socket.getInputStream());
+		Socket socket = new Socket (SERVER_IP, SERVER_PORT);
+		is = new ObjectInputStream(socket.getInputStream());
 
-			os = new DataOutputStream(socket.getOutputStream());
-		}
+		os = new DataOutputStream(socket.getOutputStream());
+
 		Main.main(args);
 	}
 }

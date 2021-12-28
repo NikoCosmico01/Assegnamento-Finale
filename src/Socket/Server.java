@@ -1,7 +1,6 @@
 package Socket;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
@@ -9,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,7 +41,29 @@ public class Server {
 				System.out.println("Login Succeded");
 				os.writeObject(new Partner(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord));
 				os.flush();
+			} else {
+				os.writeObject(null);
+				os.flush();
 			}
+		} catch (SQLException e) {
+			System.out.println("Errore:" + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	//TODO ASK
+	public static void addPartner (String name, String surname, String address, String cf, Integer id_club, String username, String password) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		try {
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Partner(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
+			statement.setString(1, name);
+			statement.setString(2, surname);
+			statement.setString(3, address);
+			statement.setString(4, cf);
+			statement.setInt(5, id_club);
+			statement.setString(6, username);
+			statement.setString(7, password);
+			statement.execute();
 		} catch (SQLException e) {
 			System.out.println("Errore:" + e.getMessage());
 		}
@@ -65,7 +87,7 @@ public class Server {
 		disconnect();
 	}
 	
-	public static ArrayList<Competition> retriveEvents() throws SQLException, ClassNotFoundException {
+	public static void retriveEvents() throws SQLException, ClassNotFoundException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
@@ -75,12 +97,10 @@ public class Server {
 				Competition C = new Competition(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Cost"));
 				competitionList.add(C);
 			}
-			return competitionList;
 		} catch (SQLException e) {
 			System.out.println("Errore:" + e.getMessage());
 		}
 		disconnect();
-		return null;
 	}
 	
 	public static void disconnect() throws SQLException {
@@ -89,24 +109,22 @@ public class Server {
 		
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
 
-		try (ServerSocket server = new ServerSocket(PORT)) {
-			while (true) {
-				System.out.println("[SERVER] Server Is Waiting For A Connection");
-				Socket client = server.accept();
-				System.out.println("[SERVER] Client Connected");
+		ServerSocket server = new ServerSocket(PORT);
+		while (true) {
+			System.out.println("[SERVER] Server Is Waiting For A Connection");
+			Socket client = server.accept();
+			System.out.println("[SERVER] Client Connected");
 
-				BufferedReader is = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			BufferedReader is = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			os = new ObjectOutputStream(client.getOutputStream());
 
-				os = new ObjectOutputStream(client.getOutputStream());
-				new DataOutputStream(client.getOutputStream());
-
-				ClientHandler clientThread = new ClientHandler(client);
-				clients.add(clientThread);
-				clientThread.run();
-				System.out.println(clients.size());
-				System.out.println(is.readLine());
-			}
+			ClientHandler clientThread = new ClientHandler(client);
+			clients.add(clientThread);
+			clientThread.run();
+			System.out.println(clients.size());
+			System.out.println(is.readLine());
 		}
+
 
 	}
 	

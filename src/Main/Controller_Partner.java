@@ -18,8 +18,6 @@ public class Controller_Partner {
 	@FXML private TableColumn<Boat, Double> Length;
 	@FXML private TableColumn<Boat, String> Subscription;
 	
-	
-	
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		Name.setCellValueFactory(new PropertyValueFactory<>("name"));
 		ID.setCellValueFactory(new PropertyValueFactory<>("iD"));

@@ -36,12 +36,14 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
+		
+		Client.os.writeBytes("registration#pollo#hermano#viabella29#PLLHER#1#pollone#ciaone\n");
+		Client.os.flush();
+		
 		Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 		Client.os.flush();
 		
 		Partner P = (Partner) Client.is.readObject();
-		
-		//P = Server.checkLogin(userName, passWord);
 		
 		if (P != null) {
 			System.out.println("Hello " + P.getName());
