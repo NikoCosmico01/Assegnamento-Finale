@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import Socket.Client;
 import Person.Partner;
-import Socket.Server;
-import Vehicle.Boat;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -38,11 +36,14 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
+		
+		Client.os.writeBytes("registration#pollo#hermano#viabella29#PLLHER#1#pollone#ciaone\n");
+		Client.os.flush();
+		
 		Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 		Client.os.flush();
-		Partner P = (Partner) Client.is.readObject();
 		
-		//P = Server.checkLogin(userName, passWord);
+		Partner P = (Partner) Client.is.readObject();
 		
 		if (P != null) {
 			System.out.println("Hello " + P.getName());

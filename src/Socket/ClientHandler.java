@@ -28,6 +28,8 @@ public class ClientHandler implements Runnable {
 					Server.checkLogin(comando[1], comando[2]);
 				} if (comando[0].equals("retrieveBoats")) {
 					Server.retrieveBoats(comando[1]);
+				} if (comando[0].equals("registration")) {
+					Server.addPartner(comando[1], comando[2], comando[3], comando[4], Integer.parseInt(comando[5]), comando[6], comando[7]);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException e) {
