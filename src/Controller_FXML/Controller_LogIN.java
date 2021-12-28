@@ -21,12 +21,9 @@ import javafx.util.Duration;
 
 public class Controller_LogIN {
 
-	@FXML
-	private TextField userNameField;
-	@FXML
-	private PasswordField passWordField;
-	@FXML
-	private Label error;
+	@FXML private TextField userNameField;
+	@FXML private PasswordField passWordField;
+	@FXML private Label error;
 
 	private Stage stage;
 	private Scene scene;
@@ -36,17 +33,12 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
-		
-		//Client.os.writeBytes("registration#pollo#hermano#viabella29#PLLHER#1#pollone#ciaone\n");
-		//Client.os.flush();
-		
 		Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 		Client.os.flush();
 		
 		Partner P = (Partner) Client.is.readObject();
 		
 		if (P != null) {
-			System.out.println("Hello " + P.getName());
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
 			rootParent = loader.load();
 			Controller_Partner Partner = loader.getController();
@@ -64,6 +56,15 @@ public class Controller_LogIN {
 			visiblePause.setOnFinished(Event -> error.setVisible(false));
 			visiblePause.play();
 		}
+	}
+	
+	public void registration (ActionEvent event) throws IOException{
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));
+		rootParent = loader.load();
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(rootParent);
+		stage.setScene(scene);
+		stage.show();
 	}
 	
 }

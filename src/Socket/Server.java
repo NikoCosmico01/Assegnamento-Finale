@@ -38,11 +38,27 @@ public class Server {
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
-				System.out.println("Login Succeded");
 				os.writeObject(new Partner(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord));
 				os.flush();
 			} else {
 				os.writeObject(null);
+				os.flush();
+			}
+		} catch (SQLException e) {
+			System.out.println("Errore:" + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void checkUserExistance(String userName) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		try { 
+			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\";");
+			if (rs.next()) {
+				os.writeByte(1);
+				os.flush();
+			} else {
+				os.writeByte(0);
 				os.flush();
 			}
 		} catch (SQLException e) {

@@ -10,12 +10,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Main.Controller_LogIN">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_FXML.Controller_LogIN">
    <children>
       <TextField fx:id="userNameField" accessibleHelp="Insert Your UserName" alignment="CENTER" layoutX="124.0" layoutY="177.0" promptText="UserName" AnchorPane.bottomAnchor="397.4" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="124.0" AnchorPane.topAnchor="177.0" />
       <PasswordField fx:id="passWordField" alignment="CENTER" layoutX="124.0" layoutY="228.0" promptText="PassWord" AnchorPane.leftAnchor="124.0" AnchorPane.rightAnchor="124.0" />
       <Button fx:id="loginButton" defaultButton="true" layoutX="173.0" layoutY="291.0" mnemonicParsing="false" onAction="#login" text="Login" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="173.0" />
-      <Hyperlink alignment="CENTER" layoutX="115.0" layoutY="343.0" text="Not Already Registered ? Sign-UP" textAlignment="CENTER" textFill="#2f2fd1" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="115.0">
+      <Hyperlink alignment="CENTER" layoutX="115.0" layoutY="343.0" onAction="#registration" text="Not Already Registered ? Sign-UP" textAlignment="CENTER" textFill="#2f2fd1" AnchorPane.leftAnchor="115.0" AnchorPane.rightAnchor="115.0">
          <font>
             <Font name="Arial Rounded MT Bold" size="10.0" />
          </font>
@@ -25,7 +25,7 @@
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font>
       </Label>
-      <ImageView fitHeight="128.0" fitWidth="306.0" layoutX="47.0" layoutY="25.0" preserveRatio="true" AnchorPane.leftAnchor="47.0" AnchorPane.rightAnchor="47.0">
+      <ImageView fitHeight="128.0" fitWidth="306.0" layoutX="47.0" layoutY="25.0" preserveRatio="true" AnchorPane.leftAnchor="47.0" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="25.0">
          <image>
             <Image url="@../Icons/Logo.png" />
          </image>

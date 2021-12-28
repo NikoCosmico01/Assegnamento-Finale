@@ -7,58 +7,23 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="CFText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="CFText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_FXML.Controller_SignUp">
    <children>
-      <ImageView fitHeight="125.0" fitWidth="298.0" layoutX="52.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
+      <TextField fx:id="NameText" layoutX="126.0" layoutY="176.0" promptText="Name" AnchorPane.bottomAnchor="405.0" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="170.0" />
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="71.0" layoutY="142.0" prefHeight="20.0" prefWidth="259.0" textAlignment="CENTER" textFill="RED" visible="false" />
+      <TextField fx:id="SurnameText" layoutX="126.0" layoutY="215.0" promptText="Surname" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="210.0" />
+      <TextField fx:id="CodF" layoutX="126.0" layoutY="252.0" promptText="Fiscal Code (CF)" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="250.0" />
+      <TextField fx:id="AddressText" layoutX="126.0" layoutY="288.0" promptText="Address" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="290.0" />
+      <TextField fx:id="userNameText" layoutX="126.0" layoutY="354.0" promptText="Username" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="354.0" />
+      <PasswordField fx:id="PasswordText" layoutX="126.0" layoutY="394.0" promptText="Password" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="394.0" />
+      <PasswordField fx:id="ConfirmText" layoutX="126.0" layoutY="434.0" promptText="Confirm Password" AnchorPane.leftAnchor="126.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="434.0" />
+      <Button layoutX="173.0" layoutY="474.0" mnemonicParsing="false" onAction="#signUp" style="-fx-background-color: GREEN;" text="SignUP" textFill="WHITE" AnchorPane.topAnchor="474.0" />
+      <ImageView fitHeight="128.0" fitWidth="306.0" layoutX="57.0" layoutY="35.0" preserveRatio="true" AnchorPane.leftAnchor="47.0" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="25.0">
          <image>
             <Image url="@../Icons/Logo.png" />
          </image>
       </ImageView>
-      <Label layoutX="14.0" layoutY="197.0" text="Name">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="NameText" layoutX="14.0" layoutY="222.0" />
-      <Label layoutX="14.0" layoutY="247.0" text="Surname">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <Label layoutX="166.0" layoutY="375.0" text="Password">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <Label layoutX="220.0" layoutY="197.0" text="COD. Fiscale">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <Label layoutX="220.0" layoutY="247.0" text="Adress">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <TextField fx:id="SurnameText" layoutX="14.0" layoutY="272.0" />
-      <PasswordField fx:id="PasswordText" layoutX="126.0" layoutY="407.0" />
-      <Label layoutX="129.0" layoutY="432.0" text="Comfirm Password">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
-      </Label>
-      <PasswordField fx:id="ConfirmText" layoutX="126.0" layoutY="470.0" />
-      <TextField layoutX="220.0" layoutY="222.0" />
-      <TextField fx:id="AdressText" layoutX="220.0" layoutY="272.0" />
-      <Label layoutX="166.0" layoutY="326.0" text="UserName">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
-      <TextField fx:id="UserNameText" layoutX="126.0" layoutY="346.0" />
-      <Button layoutX="176.0" layoutY="525.0" mnemonicParsing="false" style="-fx-background-color: GREEN;" text="SignUP" textFill="WHITE" />
-      <Button layoutX="11.0" layoutY="14.0" mnemonicParsing="false" text="BACK" />
+      <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" text="BACK" />
    </children>
 </AnchorPane>

@@ -15,7 +15,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		
-		Parent root = FXMLLoader.load(getClass().getResource("LogIN.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/Controller_FXML/LogIN.fxml"));
 		Scene scene = new Scene(root);
 		
 		primaryStage.setTitle("Sailing Club");
