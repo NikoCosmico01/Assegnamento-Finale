@@ -6,13 +6,13 @@ public class Competition {
 	private  Integer ID;
 	private  Double Cost;
 	
-	public void Competition() {
+	public Competition() {
 		this.Name = "";
 		this.ID = 0;
 		this.Cost = 0.0;
 	}
 	
-	public void Competition(String name, Integer id, Double cost) {
+	public Competition(String name, Integer id, Double cost) {
 		this.Name = name;
 		this.ID = id;
 		this.Cost = cost;

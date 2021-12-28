@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Partner implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private final String Name;
 	private final String Surname;
 	private final String CF;
