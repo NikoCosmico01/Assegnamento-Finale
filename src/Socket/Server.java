@@ -1,9 +1,11 @@
 package Socket;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
@@ -15,7 +17,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import Event.Competition;
-import Person.Partner;
+import People.Person;
 import Vehicle.Boat;
 
 public class Server {
@@ -36,9 +38,9 @@ public class Server {
 	public static void checkLogin(String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
-			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
+			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
-				os.writeObject(new Partner(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord));
+				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));
 				os.flush();
 			} else {
 				os.writeObject(null);
@@ -53,7 +55,7 @@ public class Server {
 	public static void checkUserExistance(String userName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
-			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\";");
+			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\";");
 			if (rs.next()) {
 				os.writeByte(1);
 				os.flush();

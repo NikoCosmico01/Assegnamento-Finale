@@ -2,8 +2,9 @@ package Controller_FXML;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
+import People.Person;
 import Socket.Client;
-import Person.Partner;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -28,36 +29,45 @@ public class Controller_LogIN {
 	private Stage stage;
 	private Scene scene;
 	private Parent rootParent;	
-	
+
 	public void login (ActionEvent event) throws SQLException, IOException, ClassNotFoundException{
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
-		
-		Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
-		Client.os.flush();
-		
-		Partner P = (Partner) Client.is.readObject();
-		
-		if (P != null) {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
-			rootParent = loader.load();
-			Controller_Partner Partner = loader.getController();
-			Partner.initialize(P.getCF());
-			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-			scene = new Scene(rootParent);
-			stage.setScene(scene);
-			Platform.runLater( () -> rootParent.requestFocus() );
-			stage.show();
-		} else {
+
+		if (!userName.isBlank() || !passWord.isBlank()) {
+			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
+			Client.os.flush();
+			Person P = (Person) Client.is.readObject();
+			if (P == null) {
+				error.setTextFill(Color.WHITE);
+				error.setText("Wrong Username Or Password");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else if (P.getManager() == 0) {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
+				rootParent = loader.load();
+				Controller_Partner Partner = loader.getController();
+				Partner.initialize(P.getCF());
+				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+				scene = new Scene(rootParent);
+				stage.setScene(scene);
+				Platform.runLater( () -> rootParent.requestFocus() );
+				stage.show();
+			} else if (P.getManager() == 1){
+				System.out.println("Log Manaher");
+			}
+		}else {
 			error.setTextFill(Color.WHITE);
-			error.setText("Wrong Username Or Password ");
+			error.setText("Fill All Fields");
 			error.setVisible(true);
 			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 			visiblePause.setOnFinished(Event -> error.setVisible(false));
 			visiblePause.play();
 		}
 	}
-	
+
 	public void registration (ActionEvent event) throws IOException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));
 		rootParent = loader.load();
@@ -66,5 +76,5 @@ public class Controller_LogIN {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+
 }

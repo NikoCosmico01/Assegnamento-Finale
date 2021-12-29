@@ -20,7 +20,7 @@
             <Font name="Arial Rounded MT Bold" size="10.0" />
          </font>
       </Hyperlink>
-      <Label fx:id="error" alignment="CENTER" layoutX="108.0" layoutY="148.0" opacity="0.7" style="-fx-background-color: #BB2F11;" text="Wrong Username Or Password " textAlignment="CENTER" textFill="WHITE" visible="false">
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="99.0" layoutY="151.0" opacity="0.7" prefHeight="15.0" prefWidth="202.0" style="-fx-background-color: #BB2F11;" text="ss" textFill="WHITE" visible="false">
          <font>
             <Font name="Arial Rounded MT Bold" size="12.0" />
          </font>

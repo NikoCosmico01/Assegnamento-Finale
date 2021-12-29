@@ -1,8 +1,8 @@
-package Person;
+package People;
 
 import java.io.Serializable;
 
-public class Partner implements Serializable {
+public class Person implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private final String Name;
@@ -12,8 +12,9 @@ public class Partner implements Serializable {
 	private final String UserName;
 	private final String PassWord;
 	private final Integer ID_Club;
+	private final Integer Manager;
 	
-	public Partner() {
+	public Person() {
 		this.Name = "";
 		this.Surname = "";
 		this.Address = "";
@@ -21,9 +22,10 @@ public class Partner implements Serializable {
 		this.ID_Club = 0;
 		this.UserName = "";
 		this.PassWord = "";
+		this.Manager = 0;
 	}
 	
-	public Partner(final String name, final String surname, final String address, final String cf,final Integer id_club, final String username, final String password) {
+	public Person(final String name, final String surname, final String address, final String cf,final Integer id_club, final String username, final String password, final Integer manager) {
 		this.Name = name;
 		this.Surname = surname;
 		this.Address = address;
@@ -31,6 +33,7 @@ public class Partner implements Serializable {
 		this.ID_Club = id_club;
 		this.UserName = username;
 		this.PassWord = password;
+		this.Manager = manager;
 	}
 
 	public String getName() {
@@ -47,5 +50,9 @@ public class Partner implements Serializable {
 
 	public String getCF() {
 		return this.CF;
+	}
+
+	public Integer getManager() {
+		return this.Manager;
 	}
 }
