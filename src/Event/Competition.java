@@ -1,7 +1,10 @@
 package Event;
 
-public class Competition {
+import java.io.Serializable;
 
+public class Competition implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private String Name;
 	private  Integer ID;
 	private  Double Cost;

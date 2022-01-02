@@ -23,19 +23,21 @@ public class ClientHandler implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				String[] comando = is.readLine().split("#");
-				if (comando[0].equals("connect")) {
-					Server.checkLogin(comando[1], comando[2]);
-				} if (comando[0].equals("retrieveBoats")) {
-					Server.retrieveBoats(comando[1]);
-				} if (comando[0].equals("registration")) {
-					Server.addPartner(comando[1], comando[2], comando[3], comando[4], Integer.parseInt(comando[5]), comando[6], comando[7]);
-				} if (comando[0].equals("check")) {
-					Server.checkUserExistance(comando[1]);
+				String[] command = is.readLine().split("#");
+				if (command[0].equals("connect")) {
+					Server.checkLogin(command[1], command[2]);
+				} if (command[0].equals("retrieveBoats")) {
+					Server.retrieveBoats(command[1]);
+				} if (command[0].equals("registration")) {
+					Server.addPartner(command[1], command[2], command[3], command[4], Integer.parseInt(command[5]), command[6], command[7]);
+				} if (command[0].equals("check")) {
+					Server.checkUserExistance(command[1]);
+				} if (command[0].equals("retrieveCompetitions")) {
+					Server.retriveCompetitionsParticipants();
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException e) {
-			System.err.println("IOException Failed");
+			System.err.println("Closing ClientHandler");
 		} finally {
 			out.close();
 			try {
