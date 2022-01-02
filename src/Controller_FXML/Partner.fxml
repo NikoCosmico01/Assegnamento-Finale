@@ -12,7 +12,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="940.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_FXML.Controller_Partner">
    <children>
-      <Button layoutX="863.0" layoutY="14.0" mnemonicParsing="false" style="-fx-background-color: RED;" text="LogOut" textAlignment="CENTER" textFill="WHITE">
+      <Button layoutX="863.0" layoutY="14.0" mnemonicParsing="false" onAction="#logOut" style="-fx-background-color: RED;" text="LogOut" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>
@@ -45,6 +45,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+      <Rectangle arcHeight="100.0" arcWidth="10.0" fill="#848484" height="141.0" layoutX="370.0" layoutY="444.0" opacity="0.2" stroke="BLACK" strokeLineJoin="BEVEL" strokeWidth="2.0" width="200.0" />
       <Button layoutX="13.0" layoutY="444.0" mnemonicParsing="false" text="ADD Boat" textFill="#348100" AnchorPane.leftAnchor="13.0">
          <font>
             <Font name="Candara Light" size="12.0" />
@@ -53,7 +54,7 @@
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>
-      <Button layoutX="437.0" layoutY="552.0" mnemonicParsing="false" text="Subscript">
+      <Button layoutX="437.0" layoutY="552.0" mnemonicParsing="false" onAction="#eventSubscription" text="Subscript">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>
@@ -66,21 +67,12 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="223.0" layoutX="407.0" layoutY="44.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="352.0" />
-      <TableView layoutX="407.0" layoutY="44.0" prefHeight="179.0" prefWidth="352.0" visible="false">
-        <columns>
-          <TableColumn prefWidth="351.0" />
-        </columns>
-      </TableView>
-      <Button layoutX="416.0" layoutY="232.0" mnemonicParsing="false" text="Delede" visible="false" />
-      <Button layoutX="680.0" layoutY="232.0" mnemonicParsing="false" text="Delede All" visible="false" />
       <Label layoutX="386.0" layoutY="446.0" text="Competition Subscription">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <Label layoutX="382.0" layoutY="466.0" text="Select a Boat&#10;(from the &quot;Boats Owned&quot; list)&#10;and the corresponding Event&#10;(from the &quot;Events&quot; list)&#10;then press the &quot;Subscript&quot; button&#10;" textAlignment="CENTER" />
-      <Rectangle arcHeight="100.0" arcWidth="10.0" fill="#848484" height="141.0" layoutX="370.0" layoutY="444.0" opacity="0.2" stroke="BLACK" strokeLineJoin="BEVEL" strokeWidth="2.0" width="200.0" />
       <Button layoutX="431.0" layoutY="281.0" mnemonicParsing="false" text="Notifications" AnchorPane.leftAnchor="430.0" AnchorPane.rightAnchor="430.0">
          <font>
             <Font name="Candara Light" size="12.0" />
@@ -91,6 +83,9 @@
             <Font name="Candara Light" size="12.0" />
          </font>
       </Button>
-      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="302.0" layoutY="115.0" prefHeight="18.0" prefWidth="337.0" />
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="302.0" layoutY="115.0" prefHeight="18.0" prefWidth="337.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Label>
    </children>
 </AnchorPane>

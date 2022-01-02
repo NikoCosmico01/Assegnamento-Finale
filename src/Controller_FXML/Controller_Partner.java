@@ -7,6 +7,7 @@ import Event.Participants;
 import Socket.Client;
 import Vehicle.Boat;
 import javafx.animation.PauseTransition;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,9 +37,13 @@ public class Controller_Partner {
 	private Scene scene;
 	private Parent rootParent;
 	
+	private static String Cod_F;
+	
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		boatName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		boatLength.setCellValueFactory(new PropertyValueFactory<>("length"));
+		
+		Cod_F = CF;
 		
 		Client.os.writeBytes("retrieveBoats#" + CF + "\n");
 		Client.os.flush();
@@ -46,7 +51,6 @@ public class Controller_Partner {
 		while(B != null){
 			boatList.getItems().add(B);
 			B = (Boat) Client.is.readObject();
-			System.out.println("Ricevuta Una Barca");
 		}
 		eventName.setCellValueFactory(new PropertyValueFactory<>("eventName"));
 		eventCost.setCellValueFactory(new PropertyValueFactory<>("eventCost"));
@@ -57,16 +61,39 @@ public class Controller_Partner {
 		while(P != null){
 			eventList.getItems().add(P);
 			P = (Participants) Client.is.readObject();
-			System.out.println("Ricevuta Una Competizione");
 		}
 	}
 	
-	public void eventSubscription() throws IOException {
+	@SuppressWarnings("deprecation")
+	public void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Participants chosenEvent = eventList.getSelectionModel().getSelectedItem();
 			Client.os.writeBytes(String.format("subscriptEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
 			Client.os.flush();
+			String ackString = Client.is.readLine();
+			if (ackString.equals("Done")) {
+				error.setTextFill(Color.DARKGREEN);
+				error.setText("Boat Successfully Subscripted");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else if (ackString.equals("CSE")) {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Competition Still Subscripted");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else if (ackString.equals("BSE")) {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Boat Still Subscripted");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} 
 		} catch (NullPointerException ex) {
 			error.setTextFill(Color.DARKRED);
 			error.setText("Select a Boat AND a Competition");
@@ -75,6 +102,9 @@ public class Controller_Partner {
 			visiblePause.setOnFinished(Event -> error.setVisible(false));
 			visiblePause.play();
 		}
+		boatList.getItems().clear();
+		eventList.getItems().clear();
+		initialize(Cod_F);
 	}
 	
 	public void logOut(ActionEvent event) throws IOException {
@@ -84,10 +114,6 @@ public class Controller_Partner {
 		scene = new Scene(rootParent);
 		stage.setScene(scene);
 		stage.show();
-	}
-	
-	public void subscript() {
-			
 	}
 	
 }

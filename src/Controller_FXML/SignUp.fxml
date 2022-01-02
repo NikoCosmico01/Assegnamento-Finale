@@ -24,6 +24,6 @@
             <Image url="@../Icons/Logo.png" />
          </image>
       </ImageView>
-      <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" text="BACK" />
+      <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#Back" text="BACK" />
    </children>
 </AnchorPane>

@@ -26,18 +26,20 @@ public class ClientHandler implements Runnable {
 				String[] command = is.readLine().split("#");
 				if (command[0].equals("connect")) {
 					Server.checkLogin(command[1], command[2]);
-				} if (command[0].equals("retrieveBoats")) {
+				} else if (command[0].equals("retrieveBoats")) {
 					Server.retrieveBoats(command[1]);
-				} if (command[0].equals("registration")) {
+				} else if (command[0].equals("registration")) {
 					Server.addPartner(command[1], command[2], command[3], command[4], Integer.parseInt(command[5]), command[6], command[7]);
-				} if (command[0].equals("check")) {
+				} else if (command[0].equals("check")) {
 					Server.checkUserExistance(command[1]);
-				} if (command[0].equals("retrieveCompetitions")) {
-					Server.retriveCompetitionsParticipants();
+				} else if (command[0].equals("retrieveCompetitions")) {
+					Server.retriveCompetitions();
+				} else if (command[0].equals("subscriptEvent")) {
+					Server.sendSubscription(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException e) {
-			System.err.println("Closing ClientHandler");
+			System.out.println("[SERVER] Closing ClientHandler");
 		} finally {
 			out.close();
 			try {

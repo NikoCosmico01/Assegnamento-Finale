@@ -56,7 +56,7 @@ public class Controller_LogIN {
 				Platform.runLater( () -> rootParent.requestFocus() );
 				stage.show();
 			} else if (P.getManager() == 1){
-				System.out.println("Log Manaher");
+				System.out.println("Log Manager");
 			}
 		}else {
 			error.setTextFill(Color.WHITE);
