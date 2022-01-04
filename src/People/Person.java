@@ -40,6 +40,14 @@ public class Person implements Serializable {
 		return this.Name;
 	}
 	
+	public String getSurname() {
+		return this.Surname;
+	}
+	
+	public String getAddress() {
+		return this.Address;
+	}
+	
 	public String getUserName() {
 		return this.UserName;
 	}

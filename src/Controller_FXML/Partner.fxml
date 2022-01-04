@@ -46,7 +46,7 @@
          </columnResizePolicy>
       </TableView>
       <Rectangle arcHeight="100.0" arcWidth="10.0" fill="#848484" height="141.0" layoutX="370.0" layoutY="444.0" opacity="0.2" stroke="BLACK" strokeLineJoin="BEVEL" strokeWidth="2.0" width="200.0" />
-      <Button layoutX="13.0" layoutY="444.0" mnemonicParsing="false" text="ADD Boat" textFill="#348100" AnchorPane.leftAnchor="13.0">
+      <Button layoutX="13.0" layoutY="444.0" mnemonicParsing="false" onAction="#addBoat" text="ADD Boat" textFill="#348100" AnchorPane.leftAnchor="13.0">
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>

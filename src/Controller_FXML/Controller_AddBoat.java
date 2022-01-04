@@ -2,8 +2,11 @@ package Controller_FXML;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
+import People.Person;
 import Socket.Client;
+import Vehicle.Boat;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -44,23 +47,56 @@ public class Controller_AddBoat {
     }
 
     @FXML
-    void addBoat(ActionEvent event) throws IOException {
+    void addBoat(ActionEvent event) throws IOException, ClassNotFoundException {
     	String bName = boatName.getText();
-    	Double bLength = Double.valueOf(boatLength.getText());
-    	Client.os.writeBytes("checkBoat#" + Cod_F + "#" + bName + "\n");
-		Client.os.flush();
-		String returnString = Client.is.readLine();
-		if (returnString.equals("OK")) {
-			//Procedo Alla Schermata Pagamento
-		} else if (returnString.equals("KO")) {
+    	String bLengthString = boatLength.getText();
+		if (!bName.isBlank() && !bLengthString.isBlank()) {
+			
+			try {
+				Double bLength = Double.valueOf(bLengthString);
+			} catch (NumberFormatException e) {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Length Field is Improperly Filled");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+				return;
+			}
+			
+			
+			Client.os.writeBytes("checkBoat#" + Cod_F + "#" + bName + "\n");
+			Client.os.flush();
+			String returnString = Client.is.readLine();
+			if (returnString.equals("OK")) {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
+				rootParent = loader.load();
+				Controller_Pay Pay = loader.getController();
+				Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
+				Client.os.flush();
+				Person P = (Person) Client.is.readObject();
+				Pay.initialize(P, "boatFee", 10.00);
+				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+				scene = new Scene(rootParent);
+				stage.setScene(scene);
+				stage.show();
+			} else if (returnString.equals("KO")) {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Boat Still Exists");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} 
+		} else {
 			error.setTextFill(Color.DARKRED);
-			error.setText("Boat Still Exists");
+			error.setText("Fill All Fields");
 			error.setVisible(true);
 			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 			visiblePause.setOnFinished(Event -> error.setVisible(false));
 			visiblePause.play();
-		} 
-    }
+		}
+    } 
     
     public void initialize(String CF) {
     	Cod_F = CF;

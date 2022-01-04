@@ -39,8 +39,10 @@ public class Server {
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
+				System.out.println("Esegui Quer");
 				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));
 				os.flush();
+				System.out.println("FLusho");
 			} else {
 				os.writeObject(null);
 				os.flush();
@@ -48,6 +50,7 @@ public class Server {
 		} catch (SQLException e) {
 			System.out.println("checkLogin Error: " + e.getMessage());
 		}
+		System.out.println("Disconn");
 		disconnect();
 	}
 
@@ -204,6 +207,20 @@ public class Server {
 			}
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM Boat WHERE ID = \""+ ID + "\"");
 			stmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("removeBoats Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void retrievePerson(String CF) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
+		initializeConnection();
+		try {
+			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Person WHERE CF = \"" + CF + "\";");
+			if (rs.next()) {
+				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), rs.getString("UserName"), rs.getString("PassWord"), rs.getInt("Manager")));
+				os.flush();
+			}
 		} catch (SQLException e) {
 			System.out.println("removeBoats Error: " + e.getMessage());
 		}

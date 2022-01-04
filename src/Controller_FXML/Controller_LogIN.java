@@ -37,7 +37,7 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 
-		if (!userName.isBlank() || !passWord.isBlank()) {
+		if (!userName.isBlank() && !passWord.isBlank()) {
 			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 			Client.os.flush();
 			

@@ -23,10 +23,7 @@ public class ClientHandler implements Runnable {
 	public void run() {
 		try {
 			while(true) {
-				
-				String comando = is.readLine();
-				System.out.println(comando);
-				String[] command = comando.split("#");
+				String[] command = is.readLine().split("#");
 				if (command[0].equals("connect")) {
 					Server.checkLogin(command[1], command[2]);
 				} else if (command[0].equals("retrieveBoats")) {
@@ -43,21 +40,14 @@ public class ClientHandler implements Runnable {
 					Server.checkBoat(command[1], command[2]);
 				} else if (command[0].equals("removeBoat")) {
 					Server.removeBoat(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+				}else if (command[0].equals("retrievePerson")) {
+					Server.retrievePerson(command[1]);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
 			System.out.println("[SERVER] Closing ClientHandler");
 		} finally {
-			try {
-				os.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			
 		}
 		
 	}
