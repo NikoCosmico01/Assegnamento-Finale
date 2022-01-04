@@ -1,7 +1,8 @@
 package Socket;
 
+import static Socket.ClientHandler.os;
+
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
@@ -10,7 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import javax.sql.PooledConnection;
 
 import Event.Participants;
 import People.Person;
@@ -19,13 +25,8 @@ import Vehicle.Boat;
 public class Server {
 	private static final int PORT = 9090;
 
-	private static ArrayList<ClientHandler> clients = new ArrayList<>();
 	private static Connection connection;
 	private static Statement statement;
-
-	private static ObjectOutputStream os;
-
-	private static ServerSocket server;
 
 	public static void initializeConnection() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
@@ -93,6 +94,7 @@ public class Server {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE CF_Owner = \""+ CF + "\";");
 			while (rs.next()) {
 				os.writeObject(new Boat(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Length")));
+				System.out.println(new Boat(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Length")));
 				os.flush();
 			}
 			os.writeObject(null);
@@ -138,7 +140,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void sendSubscription(Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
+	public static void subscriptEvent(Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
@@ -147,10 +149,12 @@ public class Server {
 				if (eventID.equals(rs.getInt("ID_Competition"))) {
 					os.writeBytes("CSE\n");
 					os.flush();
+					disconnect();
 					return;
 				} if (boatID.equals(rs.getInt("ID_Boat"))) {
 					os.writeBytes("BSE\n");
 					os.flush();
+					disconnect();
 					return;
 				}
 			}
@@ -160,7 +164,7 @@ public class Server {
 		Statement statement = connection.createStatement();
 		try {
 			statement.executeUpdate("INSERT INTO Participants VALUES (" + boatID + ", " + eventID + ");");
-			os.writeBytes("Done\n");
+			os.writeBytes("OK\n");
 			os.flush();
 		} catch (Exception e) {
 			System.err.println("Insert sendSubscription Error: " + e.getMessage());
@@ -168,24 +172,62 @@ public class Server {
 		disconnect();
 	}
 
+	public static void checkBoat(String CF, String boatName) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE CF_Owner = \"" + CF + "\" AND Name = \"" + boatName + "\";");
+			if (rs.next()) {
+				os.writeBytes("KO\n");
+				os.flush();
+			}
+			os.writeBytes("OK\n");
+			os.flush();
+		} catch (SQLException e) {
+			System.out.println("retrieveBoats Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
+	public static void removeBoat(Integer ID, Integer Checker) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
+		initializeConnection();
+		try {
+			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Participants WHERE ID_Boat = " + ID + ";");
+			if (rs.next() && Checker == 0) {
+				os.writeBytes("RQDL\n");
+				os.flush();
+				disconnect();
+				return;
+			} if (Checker == 1) {
+				PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Participants WHERE ID_Boat = " + ID + ";");
+				stmtI.executeUpdate();
+			}
+			PreparedStatement stmt = connection.prepareStatement("DELETE FROM Boat WHERE ID = \""+ ID + "\"");
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("removeBoats Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
 	public static void disconnect() throws SQLException {
 		connection.close();
 	}
-
+	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-
+		LinkedList<ClientHandler> clients = new LinkedList<>();
+		//LoggedUsers = new LinkedList<>();
+		ServerSocket server = null;
 		try {
 			server = new ServerSocket(PORT);
 			while (true) {
 				System.out.println("[SERVER] Server Is Waiting For A Connection");
 				Socket client = server.accept();
 				System.out.println("[SERVER] Client Connected");
-
-				os = new ObjectOutputStream(client.getOutputStream());
-
+				
 				ClientHandler clientThread = new ClientHandler(client);
 				clients.add(clientThread);
-				clientThread.run();
+				new Thread(clientThread).start();
 				System.out.println(clients.size());
 			}
 		} catch (IOException e) {

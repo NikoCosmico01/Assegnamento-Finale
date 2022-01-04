@@ -2,9 +2,11 @@ package Controller_FXML;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import Event.Participants;
 import Socket.Client;
+import Socket.Server;
 import Vehicle.Boat;
 import javafx.animation.PauseTransition;
 
@@ -14,6 +16,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,7 +49,6 @@ public class Controller_Partner {
 		boatLength.setCellValueFactory(new PropertyValueFactory<>("length"));
 		
 		Cod_F = CF;
-		
 		Client.os.writeBytes("retrieveBoats#" + CF + "\n");
 		Client.os.flush();
 		Boat B = (Boat) Client.is.readObject();
@@ -64,6 +68,70 @@ public class Controller_Partner {
 		}
 	}
 	
+	public void addBoat(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
+		rootParent = loader.load();
+		Controller_AddBoat AddBoat = loader.getController();
+		AddBoat.initialize(Cod_F);
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(rootParent);
+		stage.setScene(scene);
+		stage.show();
+	}
+	
+	public void removeBoat() throws ClassNotFoundException, IOException, SQLException {
+		try {
+			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
+			Integer boatID = chosenBoat.getID();
+			Client.os.writeBytes("removeBoat#" + boatID + "#0\n");
+			Client.os.flush();
+			String returString = Client.is.readLine();
+			if (returString.equals("OK")) {
+				error.setTextFill(Color.DARKGREEN);
+				error.setText("Boat Successfully Removed");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else if (returString.equals("RQDL")) {
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("[SERVER] Confirmation Request");
+				alert.setHeaderText("The chosen Boat is actually Subscripted to a running competition !");
+				alert.setContentText("Do you still want to Delete It ?");
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.get() == ButtonType.OK){
+					Client.os.writeBytes("removeBoat#" + boatID + "#1\n");
+					Client.os.flush();
+				} else {
+					error.setTextFill(Color.DARKRED);
+					error.setText("Deleted Canceled");
+					error.setVisible(true);
+					PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+					visiblePause.setOnFinished(Event -> error.setVisible(false));
+					visiblePause.play();
+					return;
+				}
+			} else {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Generic Error");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			}
+		} catch (NullPointerException ex) {
+			error.setTextFill(Color.DARKRED);
+			error.setText("Select a Boat");
+			error.setVisible(true);
+			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+			visiblePause.setOnFinished(Event -> error.setVisible(false));
+			visiblePause.play();
+		}
+		boatList.getItems().clear();
+		eventList.getItems().clear();
+		initialize(Cod_F);
+	}
+	
 	@SuppressWarnings("deprecation")
 	public void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
@@ -72,7 +140,7 @@ public class Controller_Partner {
 			Client.os.writeBytes(String.format("subscriptEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
 			Client.os.flush();
 			String ackString = Client.is.readLine();
-			if (ackString.equals("Done")) {
+			if (ackString.equals("OK")) {
 				error.setTextFill(Color.DARKGREEN);
 				error.setText("Boat Successfully Subscripted");
 				error.setVisible(true);
@@ -93,7 +161,14 @@ public class Controller_Partner {
 				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 				visiblePause.setOnFinished(Event -> error.setVisible(false));
 				visiblePause.play();
-			} 
+			} else {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Generic Error");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			}
 		} catch (NullPointerException ex) {
 			error.setTextFill(Color.DARKRED);
 			error.setText("Select a Boat AND a Competition");

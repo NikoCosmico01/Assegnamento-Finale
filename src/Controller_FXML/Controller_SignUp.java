@@ -44,7 +44,7 @@ public class Controller_SignUp {
 
 		if(!userName.isBlank() && !passWord.isBlank() && !ConfPassWord.isBlank() && !Name.isBlank() && !Surname.isBlank() && !Address.isBlank() && !CF.isBlank()) {
 			
-			Client.os.writeBytes("check#" + userName + "\n");
+			Client.os.writeBytes("checkUser#" + userName + "\n");
 			Client.os.flush();
 			
 			if (Client.is.readByte() == 0) {

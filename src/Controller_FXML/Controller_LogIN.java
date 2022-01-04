@@ -1,10 +1,13 @@
 package Controller_FXML;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 
 import People.Person;
 import Socket.Client;
+import Socket.ClientHandler;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -37,6 +40,7 @@ public class Controller_LogIN {
 		if (!userName.isBlank() || !passWord.isBlank()) {
 			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 			Client.os.flush();
+			
 			Person P = (Person) Client.is.readObject();
 			if (P == null) {
 				error.setTextFill(Color.WHITE);
