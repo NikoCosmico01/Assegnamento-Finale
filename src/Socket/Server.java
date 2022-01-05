@@ -37,7 +37,7 @@ public class Server {
 	public static void checkLogin(String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
-			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
+			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
 				System.out.println("Esegui Quer");
 				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));

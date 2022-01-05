@@ -1,8 +1,6 @@
 package Controller_FXML;
 
 import java.io.IOException;
-
-
 import Socket.Client;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -33,7 +31,8 @@ public class Controller_SignUp {
 	private Scene scene;
 	private Parent rootParent;
     
-    public void signUp(ActionEvent event) throws IOException {
+    public void signUp(ActionEvent event)throws IOException{
+    	System.out.println("signup");
     	String Name = NameText.getText();
     	String Surname = SurnameText.getText();
 		String Address = AddressText.getText();
@@ -41,7 +40,6 @@ public class Controller_SignUp {
 		String userName = userNameText.getText();
 		String passWord = PasswordText.getText();
 		String ConfPassWord = ConfirmText.getText();
-
 		if(!userName.isBlank() && !passWord.isBlank() && !ConfPassWord.isBlank() && !Name.isBlank() && !Surname.isBlank() && !Address.isBlank() && !CF.isBlank()) {
 			
 			Client.os.writeBytes("checkUser#" + userName + "\n");
