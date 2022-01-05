@@ -36,6 +36,9 @@ public class Controller_LogIN {
 	public void login (ActionEvent event) throws SQLException, IOException, ClassNotFoundException{
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
+		
+		userName = "Ile";
+		passWord = "Prova";
 
 		if (!userName.isBlank() && !passWord.isBlank()) {
 			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
