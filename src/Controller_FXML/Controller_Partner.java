@@ -9,7 +9,7 @@ import Socket.Client;
 import Socket.Server;
 import Vehicle.Boat;
 import javafx.animation.PauseTransition;
-
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,6 +76,7 @@ public class Controller_Partner {
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(rootParent);
 		stage.setScene(scene);
+		Platform.runLater( () -> rootParent.requestFocus() );
 		stage.show();
 	}
 	
