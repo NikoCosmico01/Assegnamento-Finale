@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Dic 27, 2021 alle 11:11
+-- Creato il: Gen 05, 2022 alle 15:51
 -- Versione del server: 10.4.21-MariaDB
 -- Versione PHP: 8.0.11
 
@@ -31,21 +31,20 @@ CREATE TABLE `boat` (
   `Name` varchar(50) NOT NULL,
   `ID` int(11) NOT NULL,
   `CF_Owner` varchar(16) NOT NULL,
-  `Length` float DEFAULT NULL,
-  `Subscription` varchar(10) NOT NULL
+  `Length` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dump dei dati per la tabella `boat`
 --
 
-INSERT INTO `boat` (`Name`, `ID`, `CF_Owner`, `Length`, `Subscription`) VALUES
-('Fugassa', 10, 'NCLTHEI', 10, 'NO'),
-('CinCion', 11, 'NCLTHEI', 14, 'NO'),
-('Savonarola', 12, 'MRCSTPD', 20, 'NO'),
-('Ghemellidi', 13, 'MRCSTPD', 18.1, 'NO'),
-('Mimì', 14, 'ILNTRZZ', 8, 'NO'),
-('Coccò', 15, 'ILNTRZZ', 18.9, 'NO');
+INSERT INTO `boat` (`Name`, `ID`, `CF_Owner`, `Length`) VALUES
+('Fugassa', 10, 'NCLTHEI', 10),
+('CinCion', 11, 'NCLTHEI', 14),
+('Savonarola', 12, 'MRCSTPD', 20),
+('Ghemellidi', 13, 'MRCSTPD', 18.1),
+('Mimì', 14, 'ILNTRZZ', 8),
+('Coccò', 15, 'ILNTRZZ', 18.9);
 
 -- --------------------------------------------------------
 
@@ -83,7 +82,8 @@ CREATE TABLE `competition` (
 
 INSERT INTO `competition` (`Name`, `ID`, `Cost`) VALUES
 ('The Destroyer Competition', 100, 120.9),
-('The Death Challenge', 101, 290.8);
+('The Death Challenge', 101, 290.8),
+('Trial Competition', 102, 100);
 
 -- --------------------------------------------------------
 
@@ -97,6 +97,13 @@ CREATE TABLE `fees` (
   `Cost` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dump dei dati per la tabella `fees`
+--
+
+INSERT INTO `fees` (`ID_Payment`, `Description`, `Cost`) VALUES
+(50, 'Membership', 149.99);
+
 -- --------------------------------------------------------
 
 --
@@ -104,35 +111,17 @@ CREATE TABLE `fees` (
 --
 
 CREATE TABLE `participants` (
-  `CF_Partner` varchar(16) NOT NULL,
-  `ID_Boat` int(11) NOT NULL,
-  `ID_Competition` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Struttura della tabella `partner`
---
-
-CREATE TABLE `partner` (
-  `Name` varchar(50) DEFAULT NULL,
-  `Surname` varchar(50) DEFAULT NULL,
-  `Address` varchar(50) DEFAULT NULL,
-  `CF` varchar(16) NOT NULL,
-  `ID_Club` int(11) NOT NULL,
-  `UserName` varchar(20) NOT NULL,
-  `PassWord` varchar(20) NOT NULL
+  `ID_Boat` smallint(6) NOT NULL,
+  `ID_Competition` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dump dei dati per la tabella `partner`
+-- Dump dei dati per la tabella `participants`
 --
 
-INSERT INTO `partner` (`Name`, `Surname`, `Address`, `CF`, `ID_Club`, `UserName`, `PassWord`) VALUES
-('Ilenia', 'Truzza', 'Via Dei Mongolspastici', 'ILNTRZZ', 1, 'Ile', 'LaTruzza'),
-('Marco', 'Calvi', 'Via Di Sto Cavolo 10', 'MRCSTPD', 1, 'Marcolindo', 'Prova'),
-('Nicolò', 'Thei', 'Via Mozzachiodi', 'NCLTHEI', 1, 'NicoCosmico01', 'Prova');
+INSERT INTO `participants` (`ID_Boat`, `ID_Competition`) VALUES
+(14, 101),
+(15, 100);
 
 -- --------------------------------------------------------
 
@@ -144,7 +133,9 @@ CREATE TABLE `partner_payment_fees` (
   `CF` varchar(16) NOT NULL,
   `ID_Boat` int(11) DEFAULT NULL,
   `ID_Payment` int(11) NOT NULL,
-  `Expiration` date DEFAULT NULL
+  `Expiration` date DEFAULT NULL,
+  `ID_Competition` smallint(6) DEFAULT NULL,
+  `Description` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -164,6 +155,33 @@ CREATE TABLE `payment` (
   `Execution_Date` varchar(20) DEFAULT NULL,
   `Amount` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `person`
+--
+
+CREATE TABLE `person` (
+  `Name` varchar(50) DEFAULT NULL,
+  `Surname` varchar(50) DEFAULT NULL,
+  `Address` varchar(50) DEFAULT NULL,
+  `CF` varchar(16) NOT NULL,
+  `ID_Club` int(11) NOT NULL,
+  `UserName` varchar(20) NOT NULL,
+  `PassWord` varchar(20) NOT NULL,
+  `Manager` int(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `person`
+--
+
+INSERT INTO `person` (`Name`, `Surname`, `Address`, `CF`, `ID_Club`, `UserName`, `PassWord`, `Manager`) VALUES
+('Carlo', 'Acutis', 'Via Della Fede 1', 'CRLCTS', 1, 'Carlo', 'Prova', 0),
+('Ilenia', 'Truzza', 'Via Dei Mongolspastici', 'ILNTRZZ', 1, 'Ile', 'Prova', 0),
+('Marco', 'Calvi', 'Via Di Sto Cavolo 10', 'MRCSTPD', 1, 'Marcolindo', 'Prova', 0),
+('Nicolò', 'Thei', 'Via Mozzachiodi', 'NCLTHEI', 1, 'NicoCosmico01', 'Prova', 0);
 
 --
 -- Indici per le tabelle scaricate
@@ -197,13 +215,7 @@ ALTER TABLE `fees`
 -- Indici per le tabelle `participants`
 --
 ALTER TABLE `participants`
-  ADD PRIMARY KEY (`ID_Competition`,`ID_Boat`);
-
---
--- Indici per le tabelle `partner`
---
-ALTER TABLE `partner`
-  ADD PRIMARY KEY (`CF`);
+  ADD PRIMARY KEY (`ID_Boat`,`ID_Competition`);
 
 --
 -- Indici per le tabelle `partner_payment_fees`
@@ -216,6 +228,12 @@ ALTER TABLE `partner_payment_fees`
 --
 ALTER TABLE `payment`
   ADD PRIMARY KEY (`ID`);
+
+--
+-- Indici per le tabelle `person`
+--
+ALTER TABLE `person`
+  ADD PRIMARY KEY (`CF`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

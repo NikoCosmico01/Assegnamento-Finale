@@ -23,16 +23,16 @@
          </toggleGroup>
       </RadioButton>
       <RadioButton fx:id="ibanRadio" layoutX="524.0" layoutY="370.0" mnemonicParsing="false" onAction="#paymentButtonChanged" text="IBAN" toggleGroup="$Type" />
-      <RadioButton fx:id="membFee" layoutX="435.0" layoutY="247.0" mnemonicParsing="false" onAction="#purposeButtonChanged" text="Membership Fee">
+      <RadioButton fx:id="membFee" layoutX="435.0" layoutY="247.0" mnemonicParsing="false" text="Membership Fee">
          <toggleGroup>
             <ToggleGroup fx:id="Casual" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="boatFee" layoutX="584.0" layoutY="247.0" mnemonicParsing="false" onAction="#purposeButtonChanged" text="Boat Storage Fee" toggleGroup="$Casual" />
-      <RadioButton fx:id="compFee" layoutX="224.0" layoutY="247.0" mnemonicParsing="false" onAction="#purposeButtonChanged" text="Competition Registration Fee" toggleGroup="$Casual" />
+      <RadioButton fx:id="boatFee" layoutX="584.0" layoutY="247.0" mnemonicParsing="false" text="Boat Storage Fee" toggleGroup="$Casual" />
+      <RadioButton fx:id="compFee" layoutX="224.0" layoutY="247.0" mnemonicParsing="false" text="Competition Registration Fee" toggleGroup="$Casual" />
       <TextField fx:id="nameField" editable="false" layoutX="310.0" layoutY="135.0" promptText="Name" />
       <TextField fx:id="surnameField" editable="false" layoutX="502.0" layoutY="135.0" promptText="Surname" />
-      <TextField fx:id="addressField" editable="false" layoutX="408.0" layoutY="180.0" promptText="Address" />
+      <TextField fx:id="addressField" editable="false" layoutX="408.0" layoutY="180.0" promptText="Address" AnchorPane.leftAnchor="408.0" AnchorPane.rightAnchor="382.4" />
       <Label layoutX="433.0" layoutY="219.0" text="Payment Purpose">
          <font>
             <Font name="System Bold" size="12.0" />
@@ -55,9 +55,9 @@
          </font>
       </Label>
       <Button layoutX="456.0" layoutY="499.0" mnemonicParsing="false" text="Submit" />
-      <TextField fx:id="ibanField" depthTest="DISABLE" layoutX="333.0" layoutY="406.0" prefHeight="26.0" prefWidth="300.0" promptText="IBAN" visible="false" />
-      <TextField fx:id="cardNumberField" layoutX="394.0" layoutY="406.0" prefHeight="26.0" prefWidth="177.0" promptText="Card Number" visible="false" />
-      <TextField fx:id="cvcField" layoutX="524.0" layoutY="445.0" prefHeight="26.0" prefWidth="49.0" promptText="CVC" visible="false" />
-      <TextField fx:id="expiryField" layoutX="394.0" layoutY="445.0" prefHeight="26.0" prefWidth="49.0" promptText="Expiry" visible="false" />
+      <TextField fx:id="ibanField" depthTest="DISABLE" layoutX="360.0" layoutY="406.0" prefHeight="26.0" prefWidth="246.0" promptText="IBAN" visible="false" />
+      <TextField fx:id="cardNumberField" layoutX="394.0" layoutY="406.0" prefHeight="26.0" prefWidth="177.0" promptText="Card Number" visible="false" AnchorPane.leftAnchor="394.0" AnchorPane.rightAnchor="368.4" />
+      <TextField fx:id="cvcField" layoutX="523.0" layoutY="445.0" prefHeight="26.0" prefWidth="49.0" promptText="CVC" visible="false" AnchorPane.rightAnchor="368.4" />
+      <TextField fx:id="expiryField" layoutX="394.0" layoutY="445.0" prefHeight="26.0" prefWidth="49.0" promptText="Expiry" visible="false" AnchorPane.leftAnchor="394.0" />
    </children>
 </AnchorPane>
