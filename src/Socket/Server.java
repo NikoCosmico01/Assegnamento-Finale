@@ -37,7 +37,7 @@ public class Server {
 	public static void checkLogin(String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
-			ResultSet rs = statement.executeQuery("SELECT * FROM Partner WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
+			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
 				System.out.println("Esegui Quer");
 				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));
@@ -75,7 +75,7 @@ public class Server {
 	public static void addPartner (String name, String surname, String address, String cf, Integer id_club, String username, String password) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO Partner(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Peroson(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
 			statement.setString(1, name);
 			statement.setString(2, surname);
 			statement.setString(3, address);
