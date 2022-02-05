@@ -51,7 +51,6 @@ public class Controller_AddBoat {
     	String bName = boatName.getText();
     	String bLengthString = boatLength.getText();
 		if (!bName.isBlank() && !bLengthString.isBlank()) {
-			
 			try {
 				Double bLength = Double.valueOf(bLengthString);
 			} catch (NumberFormatException e) {
@@ -64,7 +63,6 @@ public class Controller_AddBoat {
 				return;
 			}
 			
-			
 			Client.os.writeBytes("checkBoat#" + Cod_F + "#" + bName + "\n");
 			Client.os.flush();
 			String returnString = Client.is.readLine();
@@ -75,7 +73,7 @@ public class Controller_AddBoat {
 				Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
 				Client.os.flush();
 				Person P = (Person) Client.is.readObject();
-				Pay.initialize(P, "boatFee", 10.00);
+				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLengthString);
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
 				stage.setScene(scene);

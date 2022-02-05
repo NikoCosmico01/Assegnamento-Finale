@@ -61,7 +61,7 @@
       <TextField fx:id="ibanField" depthTest="DISABLE" layoutX="345.0" layoutY="448.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="246.0" promptText="IBAN" visible="false" />
       <TextField fx:id="cardNumberField" layoutX="361.0" layoutY="448.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="214.0" promptText="Card Number" visible="false" AnchorPane.leftAnchor="361.0" AnchorPane.rightAnchor="365.0" />
       <TextField fx:id="cvcField" layoutX="531.0" layoutY="490.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="41.0" promptText="CVC" visible="false" AnchorPane.rightAnchor="366.4" />
-      <TextField fx:id="expiryMonthField" alignment="CENTER" layoutX="361.0" layoutY="490.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="36.0" promptText="M" AnchorPane.leftAnchor="361.0" />
+      <TextField fx:id="expiryMonthField" alignment="CENTER" layoutX="361.0" layoutY="490.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="36.0" promptText="M" visible="false" AnchorPane.leftAnchor="361.0" />
       <Label layoutX="298.0" layoutY="115.0" text="Name:">
          <font>
             <Font name="System Italic" size="10.0" />
@@ -106,7 +106,7 @@
             <Font name="System Italic" size="10.0" />
          </font>
       </Label>
-      <TextField fx:id="expiryYearField" alignment="CENTER" layoutX="402.0" layoutY="490.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="36.0" promptText="Y" />
+      <TextField fx:id="expiryYearField" alignment="CENTER" layoutX="402.0" layoutY="490.0" onAction="#resetBorder" onMouseClicked="#resetBorder" prefHeight="26.0" prefWidth="36.0" promptText="Y" visible="false" />
       <Button layoutX="14.0" layoutY="560.0" mnemonicParsing="false" onAction="#Back" text="Back" />
    </children>
 </AnchorPane>

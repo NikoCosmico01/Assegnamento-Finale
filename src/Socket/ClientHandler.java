@@ -42,10 +42,17 @@ public class ClientHandler implements Runnable {
 					Server.removeBoat(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
 				}else if (command[0].equals("retrievePerson")) {
 					Server.retrievePerson(command[1]);
+				}else if (command[0].equals("addPaymentMethod")) {
+					Server.addPaymentMethod(command[1], command[2], command[3], command[4], command[5]);
+				}else if (command[0].equals("addPayment")) {
+					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], Integer.parseInt(command[4]), command[5]);
+				}else if (command[0].equals("addBoat")) {
+					Server.addBoat(command[1], command[2], Double.parseDouble(command[3]));
 				}
+				
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
-			System.out.println("[SERVER] Closing ClientHandler");
+			System.out.println("[SERVER] Closing ClientHandler " + e.getMessage());
 		} finally {
 			
 		}

@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.PooledConnection;
 
+import com.mysql.cj.exceptions.RSAException;
+
 import Event.Participants;
 import People.Person;
 import Vehicle.Boat;
@@ -75,7 +77,7 @@ public class Server {
 	public static void addPartner (String name, String surname, String address, String cf, Integer id_club, String username, String password) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO Peroson(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Person(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
 			statement.setString(1, name);
 			statement.setString(2, surname);
 			statement.setString(3, address);
@@ -89,7 +91,71 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	public static void addPaymentMethod (String cf, String creditcard_id, String expiration, String cv2, String iban) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("Select * FROM PaymentMethods WHERE CreditCard_ID = " + creditcard_id + ";");
+			if (!rs.next()) {
+				try {
+					PreparedStatement statement = connection.prepareStatement("INSERT INTO PaymentMethods(CF, CreditCard_ID, Expiration, CV2, IBAN) VALUES (?,?,?,?,?)");
+					statement.setString(1, cf);
+					statement.setString(2, creditcard_id);
+					statement.setString(3, expiration);
+					statement.setString(4, cv2);
+					statement.setString(5, iban);
+					statement.execute();
+				} catch (SQLException e) {
+					System.out.println("addPayment Error: " + e.getMessage());
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("retrieve-ALL-Competitions Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void addPayment (String cf, Integer id_boat, String expiration, Integer id_competition, String description) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		try {
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Person(CF, ID_Boat, Expiration, ID_Competition, Description) VALUES (?,?,?,?,?)");
+			statement.setString(1, cf);
+			statement.setInt(2, id_boat);
+			statement.setString(3, expiration);
+			statement.setInt(4, id_competition);
+			statement.setString(5, description);
+			statement.execute();
+		} catch (SQLException e) {
+			System.out.println("addPayment Error: " + e.getMessage());
+		}
+		disconnect();
+	}
 
+	public static void addBoat (String cf, String boatName, Double boatLength) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		try {
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Boat(Name, CF_Owner, Length) VALUES (?,?,?)");
+			statement.setString(1, cf);
+			statement.setString(2, boatName);
+			statement.setDouble(3, boatLength);
+			statement.execute();
+		} catch (SQLException e) {
+			System.out.println("addBoat Error: " + e.getMessage());
+		}
+		disconnect();
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT ID FROM Boat WHERE Name = " + "\"" + boatName + "\";");
+			os.writeBytes(rs.getInt("ID")+"\n");
+			os.flush();
+		} catch (SQLException e) {
+			System.out.println("Search ID Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
 	public static void retrieveBoats(String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
@@ -97,7 +163,6 @@ public class Server {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE CF_Owner = \""+ CF + "\";");
 			while (rs.next()) {
 				os.writeObject(new Boat(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Length")));
-				System.out.println(new Boat(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Length")));
 				os.flush();
 			}
 			os.writeObject(null);
