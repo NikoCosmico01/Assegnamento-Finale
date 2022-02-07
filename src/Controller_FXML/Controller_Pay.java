@@ -2,14 +2,13 @@ package Controller_FXML;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.regex.Pattern;
 
-import javax.swing.JFormattedTextField;
-import javax.swing.text.MaskFormatter;
+import com.mysql.cj.exceptions.RSAException;
 
+import Payment.Pay;
 import People.Person;
 import Socket.Client;
+import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -23,9 +22,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -69,10 +70,10 @@ public class Controller_Pay {
 	private static String boatName;
 	private static Double boatLength;
 
-	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription) {    
+	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription, Stage stage, Scene scene) throws IOException, ClassNotFoundException {    
 
 		Cod_F = P.getCF();
-		
+
 		String[] description = paymentDescription.split("#");
 
 		purposeToggleGroup = new ToggleGroup();
@@ -112,6 +113,57 @@ public class Controller_Pay {
 		if (paymentPrice != 0.0) {
 			price.setText(String.valueOf(paymentPrice));
 		}
+
+		Client.os.writeBytes("retrievePaymentMethods#" + Cod_F + "\n");
+		Client.os.flush();
+		Pay PayMet = (Pay) Client.is.readObject();
+
+
+		while (PayMet != null) {
+			final Pay tempPay = PayMet;
+			if (PayMet.getIban().equals("NULL")) {
+				MenuItem M1 = new MenuItem("Card That Ends With " + PayMet.getCardEnds());
+				methodMenu.getItems().add(M1);
+				M1.setOnAction((event) -> {
+					methodMenu.setText("Card That Ends With " + tempPay.getCardEnds());
+					cardRadio.setVisible(true);
+					ibanRadio.setVisible(true);
+					cardRadio.setDisable(true);
+					ibanRadio.setDisable(true);
+					cardRadio.setSelected(true);
+					this.paymentButtonChanged();
+					cardNumberField.setText(tempPay.getNcard());
+					cardNumberField.setDisable(true);
+					String[] exp = tempPay.getExpiration().split("/");
+					expiryMonthField.setText(exp[0]);
+					expiryMonthField.setDisable(true);
+					expiryYearField.setText(exp[1]);
+					expiryYearField.setDisable(true);
+					cvcField.setText(tempPay.getCV2());
+					cvcField.setDisable(true);
+				});
+
+			} else {
+				MenuItem M1 = new MenuItem("IBAN That Ends With " + PayMet.getIbanEnds());
+				methodMenu.getItems().add(M1);
+				M1.setOnAction((event) -> {
+					methodMenu.setText("IBAN That Ends With " + tempPay.getIbanEnds());
+					cardRadio.setVisible(true);
+					ibanRadio.setVisible(true);
+					cardRadio.setDisable(true);
+					ibanRadio.setDisable(true);
+					ibanRadio.setSelected(true);
+					this.paymentButtonChanged();
+					ibanField.setText(tempPay.getIban());
+					ibanField.setDisable(true);
+				});
+			}
+			PayMet = (Pay) Client.is.readObject();
+		}
+
+		stage.setScene(scene);
+		stage.show();
+
 	}
 
 	public static void addTextLimiter(final TextField textField, final int maxLength) {
@@ -126,8 +178,14 @@ public class Controller_Pay {
 	}
 
 	public void showNewMethod() {
+		cardRadio.setDisable(false);
 		cardRadio.setVisible(true);
+		ibanRadio.setDisable(false);
 		ibanRadio.setVisible(true);
+		cardNumberField.setDisable(false);
+		expiryMonthField.setDisable(false);
+		expiryYearField.setDisable(false);
+		cvcField.setDisable(false);
 		methodMenu.setText("+ Add Method");
 	}
 
@@ -135,11 +193,15 @@ public class Controller_Pay {
 		if (this.paymentToggleGroup.getSelectedToggle().equals(this.cardRadio)) {
 			ibanField.setVisible(false);
 			cardNumberField.setVisible(true);
+			cardNumberField.setDisable(false);
 			addTextLimiter(cardNumberField, 16);  		
 			cvcField.setVisible(true);
+			cvcField.setDisable(false);
 			addTextLimiter(cvcField, 3);
 			expiryMonthField.setVisible(true);
+			expiryMonthField.setDisable(false);
 			expiryYearField.setVisible(true);
+			expiryYearField.setDisable(false);
 			addTextLimiter(expiryMonthField, 2);  
 			addTextLimiter(expiryYearField, 2);  
 			cardLabel.setVisible(true);
@@ -158,6 +220,7 @@ public class Controller_Pay {
 			exLabel.setVisible(false);
 			ibanLabel.setVisible(true);
 			CVCLabel.setVisible(false);
+			ibanField.setDisable(false);
 		}
 	}
 
@@ -169,7 +232,7 @@ public class Controller_Pay {
 		ibanField.setStyle(null);
 	}
 
-	public void Submit() throws IOException {
+	public void Submit() throws IOException, ClassNotFoundException {
 		String cardNumber = cardNumberField.getText();
 		String cardCVC = cvcField.getText();
 		String cardMonthExpiry = expiryMonthField.getText();
@@ -178,42 +241,48 @@ public class Controller_Pay {
 
 		if (!methodMenu.getText().equals("Choose Method")) {
 			if (methodMenu.getText().equals("+ Add Method")) {
-				if(cardNumber.length() < 16) {
-					cardNumberField.setStyle("-fx-border-color: #8b0000;");
-					return;
-				} if(cardMonthExpiry.length() < 1) {
-					expiryMonthField.setStyle("-fx-border-color: #8b0000;");
-					return;
-				} if(cardYearExpiry.length() < 2) {
-					expiryYearField.setStyle("-fx-border-color: #8b0000;");
-					return;
-				} if(cardCVC.length() < 3) {
-					cvcField.setStyle("-fx-border-color: #8b0000;");
-					return;
-				} if(IBAN.length() < 30) {
-					ibanField.setStyle("-fx-border-color: #8b0000;");
-				} if ((!cardNumber.isBlank() && !cardCVC.isBlank() && !cardMonthExpiry.isBlank() && !cardYearExpiry.isBlank())) {
-					if (IBAN.isBlank()) {
-						Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
-						Client.os.flush();
-					} else {
-						Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
-						Client.os.flush();
+				if(cardRadio.isSelected()) {
+					if(cardNumber.length() < 16) {
+						cardNumberField.setStyle("-fx-border-color: #8b0000;");
+						return;
+					} if(cardMonthExpiry.length() < 1) {
+						expiryMonthField.setStyle("-fx-border-color: #8b0000;");
+						return;
+					} if(cardYearExpiry.length() < 2) {
+						expiryYearField.setStyle("-fx-border-color: #8b0000;");
+						return;
+					} if(cardCVC.length() < 3) {
+						cvcField.setStyle("-fx-border-color: #8b0000;");
+						return;
 					}
-					Client.os.writeBytes("addBoat#" + boatName + "#" + Cod_F + "#" + boatLength + "\n");
-					Client.os.flush();
-					//TODO Add Expiry Date
-					System.out.println(Client.is.readLine());
-					Client.os.writeBytes("addPayment#" + Cod_F + "#" + Client.is.readLine() + "#" + "10/10/2022" + "#" + "NULL" + "#" + "Boat Addon" + "\n");
-					Client.os.flush();
-				} else {
-					error.setTextFill(Color.DARKRED);
-					error.setText("Fill All Fields");
-					error.setVisible(true);
-					PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-					visiblePause.setOnFinished(Event -> error.setVisible(false));
-					visiblePause.play();
+					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
+				} else { 
+					if(IBAN.length() < 30) {
+						ibanField.setStyle("-fx-border-color: #8b0000;");
+						return;
+					} 
+					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
 				}
+				Client.os.flush();
+				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
+				Client.os.flush();
+				Message M = (Message) Client.is.readObject();
+				//TODO Add Expiry Date
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + "2022-12-31" + "#" + 0 + "#" + "Boat Addon" + "\n");
+				Client.os.flush();
+			} else {
+				if (IBAN.isBlank()) {
+					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
+				} else {
+					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
+				}
+				Client.os.flush();
+				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
+				Client.os.flush();
+				Message M = (Message) Client.is.readObject();
+				//TODO Add Expiry Date
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + "2022-12-31" + "#" + 0 + "#" + "Boat Addon" + "\n");
+				Client.os.flush();
 			}
 		} else {
 			error.setTextFill(Color.DARKRED);

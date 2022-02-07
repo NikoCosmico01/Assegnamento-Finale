@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import Event.Participants;
 import Socket.Client;
-import Socket.Server;
 import Vehicle.Boat;
+import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -86,15 +86,15 @@ public class Controller_Partner {
 			Integer boatID = chosenBoat.getID();
 			Client.os.writeBytes("removeBoat#" + boatID + "#0\n");
 			Client.os.flush();
-			String returString = Client.is.readLine();
-			if (returString.equals("OK")) {
+			Message M = (Message) Client.is.readObject();
+			if (M.getMsg().equals("OK")) {
 				error.setTextFill(Color.DARKGREEN);
 				error.setText("Boat Successfully Removed");
 				error.setVisible(true);
 				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 				visiblePause.setOnFinished(Event -> error.setVisible(false));
 				visiblePause.play();
-			} else if (returString.equals("RQDL")) {
+			} else if (M.getMsg().equals("RQDL")) {
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("[SERVER] Confirmation Request");
 				alert.setHeaderText("The chosen Boat is actually Subscripted to a running competition !");
@@ -133,29 +133,28 @@ public class Controller_Partner {
 		initialize(Cod_F);
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Participants chosenEvent = eventList.getSelectionModel().getSelectedItem();
 			Client.os.writeBytes(String.format("subscriptEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
 			Client.os.flush();
-			String ackString = Client.is.readLine();
-			if (ackString.equals("OK")) {
+			Message M = (Message) Client.is.readObject();
+			if (M.getMsg().equals("OK")) {
 				error.setTextFill(Color.DARKGREEN);
 				error.setText("Boat Successfully Subscripted");
 				error.setVisible(true);
 				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 				visiblePause.setOnFinished(Event -> error.setVisible(false));
 				visiblePause.play();
-			} else if (ackString.equals("CSE")) {
+			} else if (M.getMsg().equals("CSE")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Competition Still Subscripted");
 				error.setVisible(true);
 				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
 				visiblePause.setOnFinished(Event -> error.setVisible(false));
 				visiblePause.play();
-			} else if (ackString.equals("BSE")) {
+			} else if (M.getMsg().equals("BSE")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Boat Still Subscripted");
 				error.setVisible(true);

@@ -48,8 +48,9 @@ public class ClientHandler implements Runnable {
 					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], Integer.parseInt(command[4]), command[5]);
 				}else if (command[0].equals("addBoat")) {
 					Server.addBoat(command[1], command[2], Double.parseDouble(command[3]));
+				}else if (command[0].equals("retrievePaymentMethods")) {
+					Server.retrievePaymentMethods(command[1]);
 				}
-				
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
 			System.out.println("[SERVER] Closing ClientHandler " + e.getMessage());

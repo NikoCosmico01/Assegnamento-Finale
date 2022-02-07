@@ -1,68 +1,39 @@
 package Payment;
 import java.io.Serializable;
 import People.Person;
-public class Pay {
+public class Pay implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String id;
-	private Person AccountHolder;
+	private Integer id;
+	private String CF;
 	private String N_CreditCard;
 	private String Expiration;
-	private String Iban;
 	private String CV2;
-	private String Description;
-	private String date;
-	private Double amount;
+	private String Iban;
 	
 	public Pay() {
-		this.id = "";
-		this.AccountHolder = new Person();
-		this.amount = 0.0;
-		this.CV2 = "";
-		this.date = "";
-		this.Description = "";
-		this.Expiration = "";
-		this.Iban = "";
+		this.id = 0;
+		this.CF = "";
 		this.N_CreditCard = "";
-	}
-	public Pay(String id, Person AccountHolder, String description, Double amount, String date, String IBAN) {
-		this.id = id;
-		this.AccountHolder = AccountHolder;
-		this.amount = amount;
-		this.CV2 = "";
-		this.date = date;
-		this.Description = description;
 		this.Expiration = "";
-		this.Iban = IBAN;
-		this.N_CreditCard = "";
-	}
-	public Pay(String id, Person AccountHolder, String description, Double amount, String date, String N_creditCard, String Expirstion, String CV2) {
-		this.id = id;
-		this.AccountHolder = AccountHolder;
-		this.amount = amount;
-		this.CV2 = CV2;
-		this.date = date;
-		this.Description = description;
-		this.Expiration = Expirstion;
+		this.CV2 = "";
 		this.Iban = "";
+	}
+	public Pay(Integer id, String cf, String N_creditCard, String exp, String CV2, String iban) {
+		this.id = id;
+		this.CF = cf;
 		this.N_CreditCard = N_creditCard;
+		this.Expiration = exp;
+		this.CV2 = CV2;
+		this.Iban = iban;
 	}
-	public String getId() {
+	public Integer getId() {
 		return this.id;
 	}
-	public Person getAccountHolder() {
-		return this.AccountHolder;
-	}
-	public Double getamount() {
-		return this.amount;
+	public String getCF() {
+		return this.CF;
 	}
 	public String getCV2() {
 		return this.CV2;
-	}
-	public String getDate() {
-		return this.date;
-	}
-	public String getDescriptioin() {
-		return this.Description;
 	}
 	public String getExpiration() {
 		return this.Expiration;
@@ -72,5 +43,13 @@ public class Pay {
 	}
 	public String getNcard() {
 		return this.N_CreditCard;
+	}
+	public String getCardEnds() {
+		String string = this.N_CreditCard;
+		return string.substring(string.length() - 4);
+	}
+	public String getIbanEnds() {
+		String string = this.Iban;
+		return string.substring(string.length() - 4);
 	}
 }

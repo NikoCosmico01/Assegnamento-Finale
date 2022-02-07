@@ -2,11 +2,10 @@ package Controller_FXML;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.regex.Pattern;
 
 import People.Person;
 import Socket.Client;
-import Vehicle.Boat;
+import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -65,20 +64,20 @@ public class Controller_AddBoat {
 			
 			Client.os.writeBytes("checkBoat#" + Cod_F + "#" + bName + "\n");
 			Client.os.flush();
-			String returnString = Client.is.readLine();
-			if (returnString.equals("OK")) {
+			Message M = (Message) Client.is.readObject();
+			if (M.getMsg().equals("OK")) {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
 				rootParent = loader.load();
 				Controller_Pay Pay = loader.getController();
 				Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
 				Client.os.flush();
 				Person P = (Person) Client.is.readObject();
-				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLengthString);
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				stage.setScene(scene);
-				stage.show();
-			} else if (returnString.equals("KO")) {
+				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLengthString, stage, scene);
+				
+				
+			} else if (M.getMsg().equals("KO")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Boat Still Exists");
 				error.setVisible(true);

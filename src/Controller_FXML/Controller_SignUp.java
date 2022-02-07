@@ -32,7 +32,6 @@ public class Controller_SignUp {
 	private Parent rootParent;
     
     public void signUp(ActionEvent event)throws IOException{
-    	System.out.println("signup");
     	String Name = NameText.getText();
     	String Surname = SurnameText.getText();
 		String Address = AddressText.getText();

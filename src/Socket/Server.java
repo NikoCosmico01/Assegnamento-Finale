@@ -21,8 +21,10 @@ import javax.sql.PooledConnection;
 import com.mysql.cj.exceptions.RSAException;
 
 import Event.Participants;
+import Payment.Pay;
 import People.Person;
 import Vehicle.Boat;
+import Vehicle.Message;
 
 public class Server {
 	private static final int PORT = 9090;
@@ -41,10 +43,8 @@ public class Server {
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
-				System.out.println("Esegui Quer");
 				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));
 				os.flush();
-				System.out.println("FLusho");
 			} else {
 				os.writeObject(null);
 				os.flush();
@@ -52,7 +52,6 @@ public class Server {
 		} catch (SQLException e) {
 			System.out.println("checkLogin Error: " + e.getMessage());
 		}
-		System.out.println("Disconn");
 		disconnect();
 	}
 
@@ -119,7 +118,7 @@ public class Server {
 	public static void addPayment (String cf, Integer id_boat, String expiration, Integer id_competition, String description) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO Person(CF, ID_Boat, Expiration, ID_Competition, Description) VALUES (?,?,?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO PaymentHistory(CF, ID_Boat, Expiration, ID_Competition, Description) VALUES (?,?,?,?,?)");
 			statement.setString(1, cf);
 			statement.setInt(2, id_boat);
 			statement.setString(3, expiration);
@@ -134,24 +133,36 @@ public class Server {
 
 	public static void addBoat (String cf, String boatName, Double boatLength) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
+		Statement stmt = connection.createStatement();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO Boat(Name, CF_Owner, Length) VALUES (?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Boat(CF_Owner, Name, Length) VALUES (?,?,?)");
 			statement.setString(1, cf);
 			statement.setString(2, boatName);
 			statement.setDouble(3, boatLength);
 			statement.execute();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE Name =\"" + boatName + "\";");
+			rs.next();
+			os.writeObject(new Message(rs.getString("ID")));
+			os.flush();
 		} catch (SQLException e) {
 			System.out.println("addBoat Error: " + e.getMessage());
 		}
 		disconnect();
+	}
+	
+	public static void retrievePaymentMethods(String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
-			ResultSet rs = stmt.executeQuery("SELECT ID FROM Boat WHERE Name = " + "\"" + boatName + "\";");
-			os.writeBytes(rs.getInt("ID")+"\n");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM PaymentMethods WHERE CF = \""+ CF + "\";");
+			while (rs.next()) {
+				os.writeObject(new Pay(rs.getInt("ID"),rs.getString("CF"),rs.getString("CreditCard_ID"),rs.getString("Expiration"),rs.getString("CV2"),rs.getString("IBAN")));
+				os.flush();
+			}
+			os.writeObject(null);
 			os.flush();
 		} catch (SQLException e) {
-			System.out.println("Search ID Error: " + e.getMessage());
+			System.out.println("retrievePaymentMethods Error: " + e.getMessage());
 		}
 		disconnect();
 	}
@@ -215,12 +226,12 @@ public class Server {
 			ResultSet rs = statementI.executeQuery("SELECT * FROM Participants");
 			while (rs.next() == true) {
 				if (eventID.equals(rs.getInt("ID_Competition"))) {
-					os.writeBytes("CSE\n");
+					os.writeObject(new Message("CSE"));
 					os.flush();
 					disconnect();
 					return;
 				} if (boatID.equals(rs.getInt("ID_Boat"))) {
-					os.writeBytes("BSE\n");
+					os.writeObject(new Message("BSE"));
 					os.flush();
 					disconnect();
 					return;
@@ -232,7 +243,7 @@ public class Server {
 		Statement statement = connection.createStatement();
 		try {
 			statement.executeUpdate("INSERT INTO Participants VALUES (" + boatID + ", " + eventID + ");");
-			os.writeBytes("OK\n");
+			os.writeObject(new Message("OK"));
 			os.flush();
 		} catch (Exception e) {
 			System.err.println("Insert sendSubscription Error: " + e.getMessage());
@@ -246,10 +257,10 @@ public class Server {
 		try {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Boat WHERE CF_Owner = \"" + CF + "\" AND Name = \"" + boatName + "\";");
 			if (rs.next()) {
-				os.writeBytes("KO\n");
+				os.writeObject(new Message("KO"));
 				os.flush();
 			}
-			os.writeBytes("OK\n");
+			os.writeObject(new Message("OK"));
 			os.flush();
 		} catch (SQLException e) {
 			System.out.println("retrieveBoats Error: " + e.getMessage());
@@ -262,16 +273,16 @@ public class Server {
 		try {
 			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Participants WHERE ID_Boat = " + ID + ";");
 			if (rs.next() && Checker == 0) {
-				os.writeBytes("RQDL\n");
+				os.writeObject(new Message("RQDL"));
 				os.flush();
-				disconnect();
-				return;
 			} if (Checker == 1) {
 				PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Participants WHERE ID_Boat = " + ID + ";");
 				stmtI.executeUpdate();
 			}
 			PreparedStatement stmt = connection.prepareStatement("DELETE FROM Boat WHERE ID = \""+ ID + "\"");
 			stmt.executeUpdate();
+			os.writeObject(new Message("OK"));
+			os.flush();
 		} catch (SQLException e) {
 			System.out.println("removeBoats Error: " + e.getMessage());
 		}
@@ -294,6 +305,7 @@ public class Server {
 
 	public static void disconnect() throws SQLException {
 		connection.close();
+		return;
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
