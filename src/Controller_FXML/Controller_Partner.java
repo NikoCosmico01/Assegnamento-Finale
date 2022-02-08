@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import Event.Participants;
+import People.Person;
 import Socket.Client;
 import Vehicle.Boat;
 import Vehicle.Message;
@@ -137,16 +138,20 @@ public class Controller_Partner {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Participants chosenEvent = eventList.getSelectionModel().getSelectedItem();
-			Client.os.writeBytes(String.format("subscriptEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
+			Client.os.writeBytes(String.format("checkEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
 			Client.os.flush();
 			Message M = (Message) Client.is.readObject();
 			if (M.getMsg().equals("OK")) {
-				error.setTextFill(Color.DARKGREEN);
-				error.setText("Boat Successfully Subscripted");
-				error.setVisible(true);
-				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-				visiblePause.setOnFinished(Event -> error.setVisible(false));
-				visiblePause.play();
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
+				rootParent = loader.load();
+				Controller_Pay Pay = loader.getController();
+				Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
+				Client.os.flush();
+				Person P = (Person) Client.is.readObject();
+				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+				scene = new Scene(rootParent);
+				//TODO PRICE
+				Pay.initialize(P, "compFee", 10.00, chosenBoat.getID() + "#" + chosenEvent.getEventID(), stage, scene);
 			} else if (M.getMsg().equals("CSE")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Competition Still Subscripted");

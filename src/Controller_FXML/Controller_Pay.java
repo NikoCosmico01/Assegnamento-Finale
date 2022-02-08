@@ -69,6 +69,8 @@ public class Controller_Pay {
 	private static String Cod_F;
 	private static String boatName;
 	private static Double boatLength;
+	private static Integer boatID;
+	private static Integer compID;
 
 	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription, Stage stage, Scene scene) throws IOException, ClassNotFoundException {    
 
@@ -90,6 +92,8 @@ public class Controller_Pay {
 		addressField.setText(P.getAddress());
 
 		if (paymentPurpose.equals("compFee")) {
+			compID = Integer.parseInt(description[1]);
+			boatID = Integer.parseInt(description[0]);
 			compFee.setDisable(true);
 			membFee.setDisable(true);
 			boatFee.setDisable(true);
@@ -211,7 +215,7 @@ public class Controller_Pay {
 		}
 		if (this.paymentToggleGroup.getSelectedToggle().equals(this.ibanRadio)) {
 			ibanField.setVisible(true);
-			addTextLimiter(ibanField, 30);
+			addTextLimiter(ibanField, 27);
 			cardNumberField.setVisible(false);
 			cvcField.setVisible(false);
 			expiryMonthField.setVisible(false);
@@ -232,7 +236,7 @@ public class Controller_Pay {
 		ibanField.setStyle(null);
 	}
 
-	public void Submit() throws IOException, ClassNotFoundException {
+	public void Submit(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		String cardNumber = cardNumberField.getText();
 		String cardCVC = cvcField.getText();
 		String cardMonthExpiry = expiryMonthField.getText();
@@ -242,48 +246,59 @@ public class Controller_Pay {
 		if (!methodMenu.getText().equals("Choose Method")) {
 			if (methodMenu.getText().equals("+ Add Method")) {
 				if(cardRadio.isSelected()) {
+					Integer checkInteger = 0;
 					if(cardNumber.length() < 16) {
 						cardNumberField.setStyle("-fx-border-color: #8b0000;");
-						return;
+						checkInteger = 1;
 					} if(cardMonthExpiry.length() < 1) {
 						expiryMonthField.setStyle("-fx-border-color: #8b0000;");
-						return;
+						checkInteger = 1;
 					} if(cardYearExpiry.length() < 2) {
 						expiryYearField.setStyle("-fx-border-color: #8b0000;");
-						return;
+						checkInteger = 1;
 					} if(cardCVC.length() < 3) {
 						cvcField.setStyle("-fx-border-color: #8b0000;");
-						return;
+						checkInteger = 1;
+					} if (checkInteger == 0) {
+						Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
 					}
-					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
-				} else { 
-					if(IBAN.length() < 30) {
-						ibanField.setStyle("-fx-border-color: #8b0000;");
-						return;
+				} else if (ibanRadio.isSelected()) { 
+					if(IBAN.length() < 27) {
+						ibanField.setStyle("-fx-border-color: #8b0000;"); return;
 					} 
 					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
 				}
 				Client.os.flush();
+			} if (boatFee.isSelected()) {
 				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
 				Client.os.flush();
 				Message M = (Message) Client.is.readObject();
 				//TODO Add Expiry Date
 				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + "2022-12-31" + "#" + 0 + "#" + "Boat Addon" + "\n");
 				Client.os.flush();
-			} else {
-				if (IBAN.isBlank()) {
-					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
-				} else {
-					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
-				}
+			} else if (compFee.isSelected()) {
+				Client.os.writeBytes(String.format("addEvent#%d#%d\n", compID, boatID));
 				Client.os.flush();
-				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
-				Client.os.flush();
+				System.out.println("ADDEVENT SUCCESS");
 				Message M = (Message) Client.is.readObject();
-				//TODO Add Expiry Date
-				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + "2022-12-31" + "#" + 0 + "#" + "Boat Addon" + "\n");
+				String[] description = M.getMsg().split("#");
+				System.out.println("Split Success");
+				//TODO Add Expiry Date, Date Of Today, Payment Method
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + description[0] + "#" + "2022-12-31" + "#" + description[1] + "#" + "Competition Addon" + "\n");
 				Client.os.flush();
+			} else if (membFee.isSelected()) {
+				
 			}
+			//Return To Home
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
+			rootParent = loader.load();
+			Controller_Partner index = loader.getController();
+			index.initialize(Cod_F);
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(rootParent);
+			stage.setScene(scene);
+			Platform.runLater( () -> rootParent.requestFocus() );
+			stage.show();
 		} else {
 			error.setTextFill(Color.DARKRED);
 			error.setText("No Payment Method Selected");

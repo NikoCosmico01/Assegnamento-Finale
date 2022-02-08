@@ -34,11 +34,15 @@ public class ClientHandler implements Runnable {
 					Server.checkUserExistance(command[1]);
 				} else if (command[0].equals("retrieveCompetitions")) {
 					Server.retriveCompetitions();
-				} else if (command[0].equals("subscriptEvent")) {
-					Server.subscriptEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
-				} else if (command[0].equals("checkBoat")) {
+				} else if (command[0].equals("checkEvent")) {
+					Server.checkEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+				}else if (command[0].equals("addEvent")) {
+					System.out.println("Ciao");
+					Server.addEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+					System.out.println("Ciao2");
+				}else if (command[0].equals("checkBoat")) {
 					Server.checkBoat(command[1], command[2]);
-				} else if (command[0].equals("removeBoat")) {
+				}else if (command[0].equals("removeBoat")) {
 					Server.removeBoat(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
 				}else if (command[0].equals("retrievePerson")) {
 					Server.retrievePerson(command[1]);

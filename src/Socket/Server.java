@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.PooledConnection;
 
 import com.mysql.cj.exceptions.RSAException;
+import com.mysql.cj.exceptions.StatementIsClosedException;
 
 import Event.Participants;
 import Payment.Pay;
@@ -219,7 +220,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void subscriptEvent(Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
+	public static void checkEvent(Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
@@ -228,23 +229,31 @@ public class Server {
 				if (eventID.equals(rs.getInt("ID_Competition"))) {
 					os.writeObject(new Message("CSE"));
 					os.flush();
-					disconnect();
-					return;
-				} if (boatID.equals(rs.getInt("ID_Boat"))) {
+				} else if (boatID.equals(rs.getInt("ID_Boat"))) {
 					os.writeObject(new Message("BSE"));
 					os.flush();
-					disconnect();
-					return;
 				}
+				disconnect();
+				return;
 			}
+			os.writeObject(new Message("OK"));
+			os.flush();
 		} catch (Exception e) {
 			System.err.println("sendSubscription Check-Existance Error: " + e.getMessage());
 		}
+		disconnect();
+	}
+	
+	public static void addEvent(Integer eventID, Integer boatID) throws SQLException, ClassNotFoundException {
+		initializeConnection();
 		Statement statement = connection.createStatement();
 		try {
-			statement.executeUpdate("INSERT INTO Participants VALUES (" + boatID + ", " + eventID + ");");
-			os.writeObject(new Message("OK"));
+			System.out.println("1");
+			statement.executeUpdate("INSERT INTO Participants(ID_Boat, ID_Competition) VALUES (" + boatID + "," + eventID + ");");
+			System.out.println("2");
+			os.writeObject(new Message(String.valueOf(boatID) + "#" + String.valueOf(eventID)));
 			os.flush();
+			System.out.println("3");
 		} catch (Exception e) {
 			System.err.println("Insert sendSubscription Error: " + e.getMessage());
 		}
