@@ -1,9 +1,12 @@
 package Controller_FXML;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import com.mysql.cj.exceptions.RSAException;
+import com.mysql.cj.x.protobuf.MysqlxExpr.Identifier;
 
 import Payment.Pay;
 import People.Person;
@@ -243,6 +246,13 @@ public class Controller_Pay {
 		String cardYearExpiry = expiryYearField.getText();
 		String IBAN = ibanField.getText();
 
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date(System.currentTimeMillis());
+		Date expDate = new Date(System.currentTimeMillis());
+		expDate.setYear(expDate.getYear()+1);
+
+		String payNumberString = "";
+
 		if (!methodMenu.getText().equals("Choose Method")) {
 			if (methodMenu.getText().equals("+ Add Method")) {
 				if(cardRadio.isSelected()) {
@@ -261,20 +271,30 @@ public class Controller_Pay {
 						checkInteger = 1;
 					} if (checkInteger == 0) {
 						Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + cardNumber + "#" + cardMonthExpiry + "/" + cardYearExpiry + "#" + cardCVC + "#" + "NULL" + "\n");
-					}
+					} 
 				} else if (ibanRadio.isSelected()) { 
 					if(IBAN.length() < 27) {
 						ibanField.setStyle("-fx-border-color: #8b0000;"); return;
 					} 
 					Client.os.writeBytes("addPaymentMethod#" + Cod_F + "#" + "NULL" + "#" + "NULL" + "/" + "NULL" + "#" + "NULL" + "#" + IBAN + "\n");
 				}
-				Client.os.flush();
+				Client.os.flush();	
+			}
+			if (cardRadio.isSelected()) { payNumberString = cardNumber;
+			} else { payNumberString = IBAN; }
+			String finalNumberString;
+			System.out.println(payNumberString.length());
+			if (payNumberString.length() == 27) {
+				finalNumberString = "IBAN That Ends With " + payNumberString.substring(payNumberString.length()-4);
+			} else if (payNumberString.length() == 16) {
+				finalNumberString = "CARD That Ends With " + payNumberString.substring(payNumberString.length()-4);
+			} else {
+				throw new IllegalArgumentException("Error!");
 			} if (boatFee.isSelected()) {
 				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
 				Client.os.flush();
 				Message M = (Message) Client.is.readObject();
-				//TODO Add Expiry Date
-				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + "2022-12-31" + "#" + 0 + "#" + "Boat Addon" + "\n");
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + 0 + "#" + "Boat Addon" + "#" + finalNumberString + "\n");
 				Client.os.flush();
 			} else if (compFee.isSelected()) {
 				Client.os.writeBytes(String.format("addEvent#%d#%d\n", compID, boatID));
@@ -283,11 +303,10 @@ public class Controller_Pay {
 				Message M = (Message) Client.is.readObject();
 				String[] description = M.getMsg().split("#");
 				System.out.println("Split Success");
-				//TODO Add Expiry Date, Date Of Today, Payment Method
-				Client.os.writeBytes("addPayment#" + Cod_F + "#" + description[0] + "#" + "2022-12-31" + "#" + description[1] + "#" + "Competition Addon" + "\n");
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + description[0] + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + description[1] + "#" + "Competition Addon" + "#" + finalNumberString + "\n");
 				Client.os.flush();
 			} else if (membFee.isSelected()) {
-				
+
 			}
 			//Return To Home
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
@@ -315,15 +334,27 @@ public class Controller_Pay {
 
 	@FXML
 	void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
-		rootParent = loader.load();
-		Controller_AddBoat AddBoat = loader.getController();
-		AddBoat.initialize(Cod_F);
-		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-		scene = new Scene(rootParent);
-		stage.setScene(scene);
-		Platform.runLater( () -> rootParent.requestFocus() );
-		stage.show();
+		if (compFee.isSelected()) {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
+			rootParent = loader.load();
+			Controller_Partner Partner = loader.getController();
+			Partner.initialize(Cod_F);
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(rootParent);
+			stage.setScene(scene);
+			Platform.runLater( () -> rootParent.requestFocus() );
+			stage.show();
+		} else if (boatFee.isSelected()) {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
+			rootParent = loader.load();
+			Controller_AddBoat AddBoat = loader.getController();
+			AddBoat.initialize(Cod_F);
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(rootParent);
+			stage.setScene(scene);
+			Platform.runLater( () -> rootParent.requestFocus() );
+			stage.show();
+		}
 	}
 
 }

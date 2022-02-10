@@ -1,8 +1,15 @@
 package Controller_FXML;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Optional;
+
+import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
 
 import Event.Participants;
 import People.Person;
@@ -29,26 +36,29 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Controller_Partner {
-	
+
 	@FXML private TableColumn<Boat, Double> boatLength;
-    @FXML private TableView<Boat> boatList;
-    @FXML private TableColumn<Boat, String> boatName;
-    @FXML private Label error;
-    @FXML private TableColumn<Participants, String> eventBoats;
-    @FXML private TableColumn<Participants, Double> eventCost;
-    @FXML private TableView<Participants> eventList;
-    @FXML private TableColumn<Participants, String> eventName;
-    
-    private Stage stage;
+	@FXML private TableView<Boat> boatList;
+	@FXML private TableColumn<Boat, String> boatName;
+	@FXML private Label error;
+	@FXML private TableColumn<Participants, String> eventBoats;
+	@FXML private TableColumn<Participants, Double> eventCost;
+	@FXML private TableView<Participants> eventList;
+	@FXML private TableColumn<Participants, String> eventName;
+
+	private Stage stage;
 	private Scene scene;
 	private Parent rootParent;
-	
+
 	private static String Cod_F;
-	
+
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		boatName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		boatLength.setCellValueFactory(new PropertyValueFactory<>("length"));
-		
+
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date(System.currentTimeMillis());
+
 		Cod_F = CF;
 		Client.os.writeBytes("retrieveBoats#" + CF + "\n");
 		Client.os.flush();
@@ -60,15 +70,44 @@ public class Controller_Partner {
 		eventName.setCellValueFactory(new PropertyValueFactory<>("eventName"));
 		eventCost.setCellValueFactory(new PropertyValueFactory<>("eventCost"));
 		eventBoats.setCellValueFactory(new PropertyValueFactory<>("boatName"));
-		Client.os.writeBytes("retrieveCompetitions\n");
+		Client.os.writeBytes("retrieveCompetitions#" + CF + "\n");
 		Client.os.flush();
 		Participants P = (Participants) Client.is.readObject();
+		ArrayList<Participants> participantsList = new ArrayList<Participants>();
+		ArrayList<String> mylist = new ArrayList<String>();
 		while(P != null){
+			participantsList.add(P);
 			eventList.getItems().add(P);
 			P = (Participants) Client.is.readObject();
 		}
+
+		Participants P1;
+		for (Integer x = 0; x < participantsList.size(); x++) {
+			P1 = participantsList.get(x);
+			if (formatter.format(date).equals(P1.getEventDate()) && P1.getEventPodium() == null) {
+				System.out.println("ENTRO");
+				Client.os.writeBytes("getAllParticipants#" + P1.getEventID() + "\n");
+				Client.os.flush();
+				Message M = (Message) Client.is.readObject();
+				while (M != null) {
+					mylist.add(M.getMsg());
+					M = (Message) Client.is.readObject();
+				}
+				Collections.shuffle(mylist);
+				String podiumString = "";
+				for (Integer i = 0; i < mylist.size(); i++) {
+					if (i == mylist.size()-1) {
+						podiumString += mylist.get(i);
+					} else {
+						podiumString += mylist.get(i) + "-";
+					}
+					Client.os.writeBytes("setPodium#" + P1.getEventID() + "#" + podiumString + "\n");
+					Client.os.flush();
+				}
+			}
+		}
 	}
-	
+
 	public void addBoat(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
 		rootParent = loader.load();
@@ -80,7 +119,7 @@ public class Controller_Partner {
 		Platform.runLater( () -> rootParent.requestFocus() );
 		stage.show();
 	}
-	
+
 	public void removeBoat() throws ClassNotFoundException, IOException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
@@ -133,12 +172,53 @@ public class Controller_Partner {
 		eventList.getItems().clear();
 		initialize(Cod_F);
 	}
-	
+
+	public void deleteSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+		try {
+			Participants chosenEvent = eventList.getSelectionModel().getSelectedItem();
+			Client.os.writeBytes(String.format("deleteSubscription#%d\n", chosenEvent.getEventID()));
+			Client.os.flush();
+			Message M = (Message) Client.is.readObject();
+			if (M.getMsg().equals("OK")) {
+				error.setTextFill(Color.DARKGREEN);
+				error.setText("Subscription Successfully Deleted");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else if (M.getMsg().equals("NotSub")) {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Competition NOT Subscripted");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			} else {
+				error.setTextFill(Color.DARKRED);
+				error.setText("Generic Error");
+				error.setVisible(true);
+				PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+				visiblePause.setOnFinished(Event -> error.setVisible(false));
+				visiblePause.play();
+			}
+		} catch (NullPointerException ex) {
+			error.setTextFill(Color.DARKRED);
+			error.setText("Select a Competition");
+			error.setVisible(true);
+			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+			visiblePause.setOnFinished(Event -> error.setVisible(false));
+			visiblePause.play();
+		}
+		boatList.getItems().clear();
+		eventList.getItems().clear();
+		initialize(Cod_F);
+	}
+
 	public void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Participants chosenEvent = eventList.getSelectionModel().getSelectedItem();
-			Client.os.writeBytes(String.format("checkEvent#%d#%d\n", chosenEvent.getEventID(), chosenBoat.getID()));
+			Client.os.writeBytes(String.format("checkEvent#" + chosenEvent.getEventID() + "#" + chosenBoat.getID() + "#" + Cod_F + "\n"));
 			Client.os.flush();
 			Message M = (Message) Client.is.readObject();
 			if (M.getMsg().equals("OK")) {
@@ -150,8 +230,7 @@ public class Controller_Partner {
 				Person P = (Person) Client.is.readObject();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				//TODO PRICE
-				Pay.initialize(P, "compFee", 10.00, chosenBoat.getID() + "#" + chosenEvent.getEventID(), stage, scene);
+				Pay.initialize(P, "compFee", chosenEvent.getEventCost(), chosenBoat.getID() + "#" + chosenEvent.getEventID(), stage, scene);
 			} else if (M.getMsg().equals("CSE")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Competition Still Subscripted");
@@ -182,11 +261,19 @@ public class Controller_Partner {
 			visiblePause.setOnFinished(Event -> error.setVisible(false));
 			visiblePause.play();
 		}
-		boatList.getItems().clear();
-		eventList.getItems().clear();
-		initialize(Cod_F);
 	}
-	
+
+	public void subscriptionManagement(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("History.fxml"));
+		rootParent = loader.load();
+		Controller_History History = loader.getController();
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(rootParent);
+		History.initialize(Cod_F);
+		stage.setScene(scene);
+		stage.show();
+	}
+
 	public void logOut(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));
 		rootParent = loader.load();
@@ -195,5 +282,5 @@ public class Controller_Partner {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+
 }

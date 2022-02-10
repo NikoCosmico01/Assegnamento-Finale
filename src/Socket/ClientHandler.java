@@ -33,13 +33,11 @@ public class ClientHandler implements Runnable {
 				} else if (command[0].equals("checkUser")) {
 					Server.checkUserExistance(command[1]);
 				} else if (command[0].equals("retrieveCompetitions")) {
-					Server.retriveCompetitions();
+					Server.retriveCompetitions(command[1]);
 				} else if (command[0].equals("checkEvent")) {
-					Server.checkEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
+					Server.checkEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]), command[3]);
 				}else if (command[0].equals("addEvent")) {
-					System.out.println("Ciao");
 					Server.addEvent(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
-					System.out.println("Ciao2");
 				}else if (command[0].equals("checkBoat")) {
 					Server.checkBoat(command[1], command[2]);
 				}else if (command[0].equals("removeBoat")) {
@@ -49,11 +47,17 @@ public class ClientHandler implements Runnable {
 				}else if (command[0].equals("addPaymentMethod")) {
 					Server.addPaymentMethod(command[1], command[2], command[3], command[4], command[5]);
 				}else if (command[0].equals("addPayment")) {
-					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], Integer.parseInt(command[4]), command[5]);
+					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], command[4], Integer.parseInt(command[5]), command[6], command[7]);
 				}else if (command[0].equals("addBoat")) {
 					Server.addBoat(command[1], command[2], Double.parseDouble(command[3]));
 				}else if (command[0].equals("retrievePaymentMethods")) {
 					Server.retrievePaymentMethods(command[1]);
+				}else if (command[0].equals("deleteSubscription")) {
+					Server.deleteSubscription(Integer.parseInt(command[1]));
+				}else if (command[0].equals("getAllParticipants")) {
+					Server.getAllParticipants(Integer.parseInt(command[1]));
+				}else if (command[0].equals("setPodium")) {
+					Server.setPodium(Integer.parseInt(command[1]), command[2]);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {

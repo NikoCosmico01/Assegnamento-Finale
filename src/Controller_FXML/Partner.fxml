@@ -21,7 +21,7 @@
             <Image url="@../Icons/Logo.png" />
          </image>
       </ImageView>
-      <TableView fx:id="boatList" layoutX="13.0" layoutY="148.0" prefHeight="290.0" prefWidth="390.0" AnchorPane.leftAnchor="13.0">
+      <TableView fx:id="boatList" layoutX="13.0" layoutY="148.0" prefHeight="290.0" prefWidth="415.0" AnchorPane.leftAnchor="13.0">
         <columns>
           <TableColumn fx:id="boatName" editable="false" prefWidth="75.0" text="Name" />
             <TableColumn fx:id="boatLength" editable="false" prefWidth="75.0" text="Length" />
@@ -30,12 +30,12 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <Label layoutX="165.0" layoutY="124.0" text="Boats Owned">
+      <Label layoutX="177.0" layoutY="123.0" text="Boats Owned">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TableView fx:id="eventList" layoutX="541.0" layoutY="148.0" prefHeight="290.0" prefWidth="390.0" AnchorPane.rightAnchor="13.0">
+      <TableView fx:id="eventList" layoutX="541.0" layoutY="148.0" prefHeight="290.0" prefWidth="415.0" AnchorPane.rightAnchor="13.0">
         <columns>
           <TableColumn id="0" fx:id="eventName" editable="false" prefWidth="201.0" text="Name" />
           <TableColumn id="1" fx:id="eventCost" editable="false" prefWidth="76.0" text="Cost" />
@@ -50,7 +50,7 @@
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>
-      <Button layoutX="535.0" layoutY="13.0" mnemonicParsing="false" text="Pay">
+      <Button layoutX="512.0" layoutY="14.0" mnemonicParsing="false" text="Payments History">
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>
@@ -62,7 +62,7 @@
          <font>
             <Font name="Candara Light" size="12.0" />
          </font></Button>
-      <Label layoutX="710.0" layoutY="124.0" text="Events">
+      <Label layoutX="697.0" layoutY="123.0" text="Events">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -73,12 +73,7 @@
          </font>
       </Label>
       <Label layoutX="382.0" layoutY="466.0" text="Select a Boat&#10;(from the &quot;Boats Owned&quot; list)&#10;and the corresponding Event&#10;(from the &quot;Events&quot; list)&#10;then press the &quot;Subscript&quot; button&#10;" textAlignment="CENTER" />
-      <Button layoutX="431.0" layoutY="281.0" mnemonicParsing="false" text="Notifications" AnchorPane.leftAnchor="430.0" AnchorPane.rightAnchor="430.0">
-         <font>
-            <Font name="Candara Light" size="12.0" />
-         </font>
-      </Button>
-      <Button layoutX="799.0" layoutY="444.0" mnemonicParsing="false" text="Manage Subscriptions" AnchorPane.rightAnchor="13.0">
+      <Button layoutX="629.0" layoutY="14.0" mnemonicParsing="false" text="Notifications" AnchorPane.leftAnchor="629.0" AnchorPane.rightAnchor="231.0">
          <font>
             <Font name="Candara Light" size="12.0" />
          </font>
@@ -87,5 +82,15 @@
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Label>
+      <Button layoutX="807.0" layoutY="444.0" mnemonicParsing="false" onAction="#deleteSubscription" text="DELETE Subscription" textFill="#960000">
+         <font>
+            <Font name="Candara Light" size="12.0" />
+         </font>
+      </Button>
+      <Button layoutX="697.0" layoutY="444.0" mnemonicParsing="false" onAction="#subscriptionManagement" text="Manage Event">
+         <font>
+            <Font name="Candara Light" size="12.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
