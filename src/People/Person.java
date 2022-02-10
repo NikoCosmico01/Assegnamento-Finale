@@ -59,6 +59,10 @@ public class Person implements Serializable {
 	public String getCF() {
 		return this.CF;
 	}
+	
+	public Integer getID_Club() {
+		return this.ID_Club;
+	}
 
 	public Integer getManager() {
 		return this.Manager;

@@ -3,9 +3,9 @@ package Controller_FXML;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import Main.Message;
 import People.Person;
 import Socket.Client;
-import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -48,10 +48,11 @@ public class Controller_AddBoat {
     @FXML
     void addBoat(ActionEvent event) throws IOException, ClassNotFoundException {
     	String bName = boatName.getText();
-    	String bLengthString = boatLength.getText();
-		if (!bName.isBlank() && !bLengthString.isBlank()) {
+    	String bLength = boatLength.getText();
+		if (!bName.isBlank() && !bLength.isBlank()) {
 			try {
-				Double bLength = Double.valueOf(bLengthString);
+				@SuppressWarnings("unused")
+				Double bLengthDouble = Double.valueOf(bLength);
 			} catch (NumberFormatException e) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Length Field is Improperly Filled");
@@ -74,7 +75,7 @@ public class Controller_AddBoat {
 				Person P = (Person) Client.is.readObject();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLengthString, stage, scene);
+				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLength, stage, scene);
 				
 				
 			} else if (M.getMsg().equals("KO")) {

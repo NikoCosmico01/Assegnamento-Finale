@@ -5,13 +5,10 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-import com.mysql.cj.exceptions.RSAException;
-import com.mysql.cj.x.protobuf.MysqlxExpr.Identifier;
-
+import Main.Message;
 import Payment.Pay;
 import People.Person;
 import Socket.Client;
-import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -29,7 +26,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;

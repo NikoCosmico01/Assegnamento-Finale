@@ -1,13 +1,10 @@
 package Controller_FXML;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 
 import People.Person;
 import Socket.Client;
-import Socket.ClientHandler;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

@@ -3,9 +3,8 @@ package Controller_FXML;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import Event.Participants;
+import Competition.Participants;
 import Socket.Client;
-import Vehicle.Boat;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

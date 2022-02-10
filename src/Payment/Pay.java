@@ -1,6 +1,7 @@
 package Payment;
+
 import java.io.Serializable;
-import People.Person;
+
 public class Pay implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;

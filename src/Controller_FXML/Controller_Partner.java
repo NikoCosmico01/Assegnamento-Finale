@@ -6,16 +6,13 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Optional;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
-
-import Event.Participants;
+import Competition.Participants;
+import Main.Message;
 import People.Person;
 import Socket.Client;
 import Vehicle.Boat;
-import Vehicle.Message;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

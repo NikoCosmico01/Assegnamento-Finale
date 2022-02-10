@@ -1,7 +1,6 @@
-package Event;
+package Competition;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Participants implements Serializable {
 

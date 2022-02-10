@@ -13,11 +13,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
-import Event.Participants;
+import Competition.Participants;
+import Main.Message;
 import Payment.Pay;
 import People.Person;
 import Vehicle.Boat;
-import Vehicle.Message;
 
 public class Server {
 	private static final int PORT = 9090;
@@ -258,7 +258,6 @@ public class Server {
 	
 	public static void setPodium(Integer id, String podium) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
-		Statement statementI = connection.createStatement();
 		try {
 			PreparedStatement statement = connection.prepareStatement("UPDATE competition SET Podium = \"" + podium + "\" WHERE `competition`.`ID` = " + id + ";");
 			statement.execute();
