@@ -1,8 +1,7 @@
 package Socket;
 
-import static Socket.ClientHandler.os;
-
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
@@ -31,7 +30,7 @@ public class Server {
 		statement = connection.createStatement();
 	}
 
-	public static void checkLogin(String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
+	public static void checkLogin(ObjectOutputStream os, String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
@@ -48,7 +47,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void checkUserExistance(String userName) throws SQLException, ClassNotFoundException, IOException {
+	public static void checkUserExistance(ObjectOutputStream os, String userName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\";");
@@ -125,7 +124,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void addBoat (String cf, String boatName, Double boatLength) throws SQLException, ClassNotFoundException, IOException {
+	public static void addBoat (ObjectOutputStream os, String cf, String boatName, Double boatLength) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
@@ -144,7 +143,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void retrievePaymentMethods(String CF) throws SQLException, ClassNotFoundException, IOException {
+	public static void retrievePaymentMethods(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
@@ -161,7 +160,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void retrieveBoats(String CF) throws SQLException, ClassNotFoundException, IOException {
+	public static void retrieveBoats(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
@@ -178,7 +177,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void retriveCompetitions(String CF) throws SQLException, ClassNotFoundException, IOException {
+	public static void retriveCompetitions(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmtI = connection.createStatement();
 		ResultSet rsI = null;
@@ -213,7 +212,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void checkEvent(Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
+	public static void checkEvent(ObjectOutputStream os, Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
@@ -239,7 +238,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void getAllParticipants(Integer eventID) throws ClassNotFoundException, SQLException, IOException {
+	public static void getAllParticipants(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
@@ -268,7 +267,7 @@ public class Server {
 	}
 
 
-	public static void deleteSubscription(Integer eventID) throws ClassNotFoundException, SQLException, IOException {
+	public static void deleteSubscription(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
@@ -289,7 +288,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void addEvent(Integer eventID, Integer boatID) throws SQLException, ClassNotFoundException {
+	public static void addEvent(ObjectOutputStream os, Integer eventID, Integer boatID) throws SQLException, ClassNotFoundException {
 		initializeConnection();
 		Statement statement = connection.createStatement();
 		try {
@@ -302,7 +301,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void checkBoat(String CF, String boatName) throws SQLException, ClassNotFoundException, IOException {
+	public static void checkBoat(ObjectOutputStream os, String CF, String boatName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
@@ -319,7 +318,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void removeBoat(Integer ID, Integer Checker) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
+	public static void removeBoat(ObjectOutputStream os, Integer ID, Integer Checker) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
 		initializeConnection();
 		try {
 			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Participants WHERE ID_Boat = " + ID + ";");
@@ -340,7 +339,7 @@ public class Server {
 		disconnect();
 	}
 
-	public static void retrievePerson(String CF) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
+	public static void retrievePerson(ObjectOutputStream os, String CF) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
 		initializeConnection();
 		try {
 			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Person WHERE CF = \"" + CF + "\";");
