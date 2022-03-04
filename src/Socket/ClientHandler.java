@@ -63,22 +63,15 @@ public class ClientHandler implements Runnable {
 					Server.retrievePaymentHistory(os, command[1]);
 				}else if (command[0].equals("checkNotifications")) {
 					Server.checkNotifications(os, command[1]);
+				}else if (command[0].equals("getNotifications")) {
+					Server.getNotifications(os);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
 			System.out.println("[SERVER] Closing ClientHandler " + e.getMessage());
-			try {
-				Server.emptyNotifications();
-			} catch (ClassNotFoundException | SQLException | IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			
 		}
-		
 	}
 }

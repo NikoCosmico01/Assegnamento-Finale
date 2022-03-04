@@ -15,8 +15,11 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
+import com.mysql.cj.protocol.x.Notice;
+
 import Objects.Boat;
 import Objects.Message;
+import Objects.Notification;
 import Objects.Participant;
 import Objects.PaymentMethod;
 import Objects.PayIstance;
@@ -110,22 +113,27 @@ public class Server {
 			ResultSet rs = stmt.executeQuery("SELECT P.ID, P.CF, B.Name AS BoatName, P.currDate, P.Expiration, C.Name AS CompName, P.Description, P.Amount, P.PaymentMethod	"
 					+ "FROM PaymentHistory P "
 					+ "LEFT JOIN Boat B ON B.ID = P.ID_Boat LEFT JOIN competition C ON C.ID = P.ID_Competition "
-					+ "WHERE P.CF = \""+ CF + "\" AND P.Description <> \"Competition Addon\" AND currDate IN (SELECT MAX(currDate) FROM PaymentHistory GROUP BY B.Name, C.Name);");
+					+ "WHERE P.CF = \""+ CF + "\" AND P.Description <> \"Competition Addon\" AND currDate IN (SELECT MAX(currDate) FROM PaymentHistory GROUP BY ID_Boat, ID_Competition);");
+			Integer checkInteger = 0;
 			while (rs.next()) {
 				if ( - currDate.getTime() + rs.getDate("Expiration").getTime() < Long.parseLong("2678400000")) {
+					checkInteger = 1;
 					String descriptionString = "";
 					if (rs.getString("Description").equals("Boat Addon")) {
 						descriptionString = "Boat Storage Fee Needs To Be Renewed";
 					} else if (rs.getString("Description").equals("Membership Registration")) {
 						descriptionString = "Registration Fee Is Expiring";
 					}
-					PreparedStatement statement = connection.prepareStatement("INSERT INTO Notification(Object, Description, remDays, ID_Payment) VALUES (?,?,?,?)");
+					PreparedStatement statement = connection.prepareStatement("INSERT INTO Notification(stringObject, Description, remDays, ID_Payment) VALUES (?,?,?,?)");
 					statement.setString(1, rs.getString("Description"));
 					statement.setString(2, descriptionString);
 					statement.setInt(3, (int) TimeUnit.MILLISECONDS.toDays(-currDate.getTime()+rs.getDate("Expiration").getTime()));
 					statement.setInt(4, rs.getInt("ID"));
 					statement.execute();
 				}
+			} if (checkInteger == 1) {
+				os.writeByte(1);
+				os.flush();
 			}
 		} catch (SQLException e) {
 			System.out.println("checkNotifications Error: " + e.getMessage());
@@ -220,6 +228,23 @@ public class Server {
 			os.flush();
 		} catch (SQLException e) {
 			System.out.println("retrievePaymentMethods Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void getNotifications(ObjectOutputStream os) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT N.stringObject, N.Description, N.remDays, P.Amount FROM Notification N, PaymentHistory P WHERE P.ID = N.ID_Payment;");
+			while (rs.next()) {
+				os.writeObject(new Notification(rs.getString("stringObject"), rs.getString("Description"), rs.getInt("remDays"), rs.getDouble("Amount")));
+				os.flush();
+			}
+			os.writeObject(null);
+			os.flush();
+		} catch (SQLException e) {
+			System.out.println("getNotification Error: " + e.getMessage());
 		}
 		disconnect();
 	}

@@ -36,62 +36,37 @@ import javafx.util.Duration;
 
 public class Controller_Notification {
 
-    @FXML private TableColumn<Notification, Double> Amount;
-    @FXML private TableColumn<Notification, String> Description;
-    @FXML private TableColumn<Notification, String> objectString;
-    @FXML private TableView<Notification> notificationHistory;
-    @FXML private TableColumn<Notification, Integer> remDays;
+	@FXML private TableColumn<Notification, Double> Amount;
+	@FXML private TableColumn<Notification, String> Description;
+	@FXML private TableColumn<Notification, String> objectString;
+	@FXML private TableView<Notification> notificationHistory;
+	@FXML private TableColumn<Notification, Integer> remDays;
 	@FXML private Label error;
-	
+
 	private static String Cod_F;
 	private Stage stage;
 	private Scene scene;
 	private Parent rootParent;
-	
-	public void initialize() throws ClassNotFoundException, IOException {
-		objectString.setCellValueFactory(new PropertyValueFactory<>("object"));
+
+	public void initialize(String CF) throws ClassNotFoundException, IOException {
+		Cod_F = CF;
+		objectString.setCellValueFactory(new PropertyValueFactory<>("objectString"));
 		Description.setCellValueFactory(new PropertyValueFactory<>("description"));
 		remDays.setCellValueFactory(new PropertyValueFactory<>("days"));
 		Amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-		//TODO
+		Client.os.writeBytes("getNotifications#0\n");
+		Client.os.flush();
 		Notification N = (Notification) Client.is.readObject();
+		System.out.println("Riceve");
 		while(N != null){
 			notificationHistory.getItems().add(N);
 			N = (Notification) Client.is.readObject();
 		}
 	}
-	
-	public void pay(ActionEvent event) throws IOException, ClassNotFoundException{
-		try {
-			String desctription;
-			String amount;
-			String boatLenght;
-			Notification chosenNotification = notificationList.getSelectionModel().getSelectedItem();
-			desctription = chosenNotification.getDescription();
-			amount = chosenNotification.getAmount();
-			boatLenght = chosenNotification.getBoatLenght();
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
-			rootParent = loader.load();
-			Controller_Pay Pay = loader.getController();
-			Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
-			Client.os.flush();
-			Person P = (Person) Client.is.readObject();
-			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-			scene = new Scene(rootParent);
-			Pay.initialize(P, "boatFee", Double.parseDouble(amount), desctription + "#"+ boatLenght, stage, scene);
-		} catch (NullPointerException ex) {
-			error.setTextFill(Color.DARKRED);
-			error.setText("Select A Notification");
-			error.setVisible(true);
-			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
-			visiblePause.setOnFinished(Event -> error.setVisible(false));
-			visiblePause.play();
-		}
-		
-		
-	}
+
+	@FXML
 	void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
-    	FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
 		rootParent = loader.load();
 		Controller_Partner Partner = loader.getController();
 		Partner.initialize(Cod_F);
@@ -100,9 +75,6 @@ public class Controller_Notification {
 		stage.setScene(scene);
 		Platform.runLater( () -> rootParent.requestFocus() );
 		stage.show();
-    }
-	
-	public void initialize(String CF) {
-    	Cod_F = CF;
-    }
+	}
+
 }

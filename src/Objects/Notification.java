@@ -1,31 +1,30 @@
 package Objects;
 
-public class Notification {
+import java.io.Serializable;
+
+public class Notification implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String objectString;
 	private String Description;
-	private Long remainingDays;
+	private Integer remainingDays;
 	private Double amountDouble;
 	
-	public Notification() {
-		this.objectString = "";
-		this.Description = "";
-		this.remainingDays = (long) 0;
-		this.amountDouble = 0.0;
-	}
-	
-	public Notification(String objectstring, String description ,Long remainingdays, Double amountdouble) {
+	public Notification(String objectstring, String description ,Integer remainingdays, Double amountdouble) {
 		this.objectString = objectstring;
 		this.Description = description;
 		this.remainingDays = remainingdays;
 		this.amountDouble = amountdouble;
 	}
-	public String getObject() {
+	public String getObjectString() {
 		return this.objectString;
 	}
 	public String getDescription() {
 		return this.Description;
 	}
-	public Long getDays() {
+	public Integer getDays() {
 		return this.remainingDays;
 	}
 	public Double getAmount() {

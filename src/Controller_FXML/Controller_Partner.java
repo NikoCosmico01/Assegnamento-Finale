@@ -107,7 +107,9 @@ public class Controller_Partner {
 
 		Client.os.writeBytes("checkNotifications#" + Cod_F + "\n");
 		Client.os.flush();
-
+		if (Client.is.readByte() == 1) {
+			notificationPopUp.setVisible(true);
+		}
 		
 	}
 
@@ -301,7 +303,7 @@ public class Controller_Partner {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Notification.fxml"));
 		rootParent = loader.load();
 		Controller_Notification notification = loader.getController();
-		notification.initialize();
+		notification.initialize(Cod_F);
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(rootParent);
 		stage.setScene(scene);
