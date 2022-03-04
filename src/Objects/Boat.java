@@ -1,4 +1,4 @@
-package Vehicle;
+package Objects;
 
 import java.io.Serializable;
 

@@ -5,18 +5,22 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.LinkedList;
+import java.util.concurrent.TimeUnit;
 
-import Competition.Participants;
-import Main.Message;
-import Payment.Pay;
-import People.Person;
-import Vehicle.Boat;
+import Objects.Boat;
+import Objects.Message;
+import Objects.Participant;
+import Objects.PaymentMethod;
+import Objects.PayIstance;
+import Objects.Person;
 
 public class Server {
 	private static final int PORT = 9090;
@@ -35,7 +39,7 @@ public class Server {
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
-				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), userName, passWord, rs.getInt("Manager")));
+				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"), userName, passWord, rs.getInt("Manager")));
 				os.flush();
 			} else {
 				os.writeObject(null);
@@ -82,6 +86,53 @@ public class Server {
 		disconnect();
 	}
 
+	public static void emptyNotifications() throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		try {
+			PreparedStatement statement = connection.prepareStatement("DELETE FROM Notification");
+			statement.execute();
+		} catch (SQLException e) {
+			System.out.println("DeleteAll Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void checkNotifications (ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException, ParseException {
+		Server.emptyNotifications();
+		
+		initializeConnection();
+		
+		Statement stmt = connection.createStatement();
+
+		Date currDate = new Date(System.currentTimeMillis());
+
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT P.ID, P.CF, B.Name AS BoatName, P.currDate, P.Expiration, C.Name AS CompName, P.Description, P.Amount, P.PaymentMethod	"
+					+ "FROM PaymentHistory P "
+					+ "LEFT JOIN Boat B ON B.ID = P.ID_Boat LEFT JOIN competition C ON C.ID = P.ID_Competition "
+					+ "WHERE P.CF = \""+ CF + "\" AND P.Description <> \"Competition Addon\" AND currDate IN (SELECT MAX(currDate) FROM PaymentHistory GROUP BY B.Name, C.Name);");
+			while (rs.next()) {
+				if ( - currDate.getTime() + rs.getDate("Expiration").getTime() < Long.parseLong("2678400000")) {
+					String descriptionString = "";
+					if (rs.getString("Description").equals("Boat Addon")) {
+						descriptionString = "Boat Storage Fee Needs To Be Renewed";
+					} else if (rs.getString("Description").equals("Membership Registration")) {
+						descriptionString = "Registration Fee Is Expiring";
+					}
+					PreparedStatement statement = connection.prepareStatement("INSERT INTO Notification(Object, Description, remDays, ID_Payment) VALUES (?,?,?,?)");
+					statement.setString(1, rs.getString("Description"));
+					statement.setString(2, descriptionString);
+					statement.setInt(3, (int) TimeUnit.MILLISECONDS.toDays(-currDate.getTime()+rs.getDate("Expiration").getTime()));
+					statement.setInt(4, rs.getInt("ID"));
+					statement.execute();
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("checkNotifications Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
 	public static void addPaymentMethod (String cf, String creditcard_id, String expiration, String cv2, String iban) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
@@ -106,17 +157,30 @@ public class Server {
 		disconnect();
 	}
 
-	public static void addPayment (String cf, Integer id_boat, String date, String expiration, Integer id_competition, String description, String paymet) throws SQLException, ClassNotFoundException, IOException {
+	public static void addPayment (String cf, Integer id_boat, String date, String expiration, Integer id_competition, String description, Double amount, String payment) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO PaymentHistory(CF, ID_Boat, currDate, Expiration, ID_Competition, Description, PaymentMethod) VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO PaymentHistory(CF, ID_Boat, currDate, Expiration, ID_Competition, Description, Amount, PaymentMethod) VALUES (?,?,?,?,?,?,?,?)");
 			statement.setString(1, cf);
-			statement.setInt(2, id_boat);
+			if (id_boat == 0) {
+				statement.setString(2, null);
+			} else {
+				statement.setInt(2, id_boat);
+			}
 			statement.setString(3, date);
-			statement.setString(4, expiration);
-			statement.setInt(5, id_competition);
+			if (description.equals("Competition Addon")) {
+				statement.setString(4, null);
+			} else {
+				statement.setString(4, expiration);
+			}
+			if (id_competition == 0) {
+				statement.setString(5, null);
+			} else {
+				statement.setInt(5, id_competition);
+			}
 			statement.setString(6, description);
-			statement.setString(7, paymet);
+			statement.setDouble(7, amount);
+			statement.setString(8, payment);
 			statement.execute();
 		} catch (SQLException e) {
 			System.out.println("addPayment Error: " + e.getMessage());
@@ -149,7 +213,26 @@ public class Server {
 		try {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM PaymentMethods WHERE CF = \""+ CF + "\";");
 			while (rs.next()) {
-				os.writeObject(new Pay(rs.getInt("ID"),rs.getString("CF"),rs.getString("CreditCard_ID"),rs.getString("Expiration"),rs.getString("CV2"),rs.getString("IBAN")));
+				os.writeObject(new PaymentMethod(rs.getInt("ID"),rs.getString("CF"),rs.getString("CreditCard_ID"),rs.getString("Expiration"),rs.getString("CV2"),rs.getString("IBAN")));
+				os.flush();
+			}
+			os.writeObject(null);
+			os.flush();
+		} catch (SQLException e) {
+			System.out.println("retrievePaymentMethods Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
+	public static void retrievePaymentHistory(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT P.ID, P.CF, B.Name AS BoatName, P.currDate, P.Expiration, C.Name AS CompName, P.Description, P.Amount, P.PaymentMethod \r\n"
+					+ "FROM PaymentHistory P LEFT JOIN Boat B ON B.ID = P.ID_Boat LEFT JOIN competition C ON C.ID = P.ID_Competition\r\n"
+					+ "WHERE P.CF = \""+ CF + "\";");
+			while (rs.next()) {
+				os.writeObject(new PayIstance(rs.getInt("ID"),rs.getString("CF"),rs.getString("BoatName"),rs.getString("currDate"),rs.getString("Expiration"),rs.getString("CompName"),rs.getString("Description"),rs.getDouble("Amount"),rs.getString("PaymentMethod")));
 				os.flush();
 			}
 			os.writeObject(null);
@@ -195,12 +278,12 @@ public class Server {
 				while (rs.next()) {
 					if (rs.getInt("ID") == rsI.getInt("ID")) {
 						controllerInteger = 1;
-						os.writeObject(new Participants(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Cost"),rs.getString("Date"),rs.getDouble("WinPrice"),rs.getString("Podium"),rs.getString("BoatName"),rs.getInt("BoatID")));
+						os.writeObject(new Participant(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Cost"),rs.getString("Date"),rs.getDouble("WinPrice"),rs.getString("Podium"),rs.getString("BoatName"),rs.getInt("BoatID")));
 						os.flush();
 					}
 				} 
 				if (controllerInteger == 0) {
-					os.writeObject(new Participants(rsI.getString("Name"),rsI.getInt("ID"),rsI.getDouble("Cost"),rsI.getString("Date"),rsI.getDouble("WinPrice"),rsI.getString("Podium"),null, null));
+					os.writeObject(new Participant(rsI.getString("Name"),rsI.getInt("ID"),rsI.getDouble("Cost"),rsI.getString("Date"),rsI.getDouble("WinPrice"),rsI.getString("Podium"),null, null));
 					os.flush();
 				}
 			}
@@ -254,7 +337,7 @@ public class Server {
 		}
 		disconnect();
 	}
-	
+
 	public static void setPodium(Integer id, String podium) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		try {
@@ -344,7 +427,7 @@ public class Server {
 		try {
 			ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM Person WHERE CF = \"" + CF + "\";");
 			if (rs.next()) {
-				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"),rs.getInt("ID_Club"), rs.getString("UserName"), rs.getString("PassWord"), rs.getInt("Manager")));
+				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"), rs.getString("UserName"), rs.getString("PassWord"), rs.getInt("Manager")));
 				os.flush();
 			}
 		} catch (SQLException e) {

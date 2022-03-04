@@ -3,8 +3,8 @@ package Controller_FXML;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import Main.Message;
-import People.Person;
+import Objects.Message;
+import Objects.Person;
 import Socket.Client;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -75,7 +75,7 @@ public class Controller_AddBoat {
 				Person P = (Person) Client.is.readObject();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				Pay.initialize(P, "boatFee", 10.00, bName + "#" + bLength, stage, scene);
+				Pay.initialize(P, "boatFee", Double.parseDouble(bLength)*10, bName + "#" + bLength, stage, scene);
 				
 				
 			} else if (M.getMsg().equals("KO")) {

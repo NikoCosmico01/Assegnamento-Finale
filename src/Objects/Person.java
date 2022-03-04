@@ -1,4 +1,4 @@
-package People;
+package Objects;
 
 import java.io.Serializable;
 
@@ -11,7 +11,6 @@ public class Person implements Serializable {
 	private final String Address;
 	private final String UserName;
 	private final String PassWord;
-	private final Integer ID_Club;
 	private final Integer Manager;
 	
 	public Person() {
@@ -19,18 +18,16 @@ public class Person implements Serializable {
 		this.Surname = "";
 		this.Address = "";
 		this.CF = "";
-		this.ID_Club = 0;
 		this.UserName = "";
 		this.PassWord = "";
 		this.Manager = 0;
 	}
 	
-	public Person(final String name, final String surname, final String address, final String cf,final Integer id_club, final String username, final String password, final Integer manager) {
+	public Person(final String name, final String surname, final String address, final String cf, final String username, final String password, final Integer manager) {
 		this.Name = name;
 		this.Surname = surname;
 		this.Address = address;
 		this.CF = cf;
-		this.ID_Club = id_club;
 		this.UserName = username;
 		this.PassWord = password;
 		this.Manager = manager;
@@ -60,10 +57,6 @@ public class Person implements Serializable {
 		return this.CF;
 	}
 	
-	public Integer getID_Club() {
-		return this.ID_Club;
-	}
-
 	public Integer getManager() {
 		return this.Manager;
 	}

@@ -1,8 +1,8 @@
-package Competition;
+package Objects;
 
 import java.io.Serializable;
 
-public class Participants implements Serializable {
+public class Participant implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer eventID;
@@ -15,7 +15,7 @@ public class Participants implements Serializable {
 	private String boatName;
 	private Integer boatID;
 
-	public Participants() {
+	public Participant() {
 		this.eventName = "";
 		this.eventID = 0;
 		this.eventCost = 0.0;
@@ -26,7 +26,7 @@ public class Participants implements Serializable {
 		this.boatID = 0;
 	}
 
-	public Participants(String eventname, Integer eventid, Double eventcost, String date, Double prize, String podium, String boatname, Integer boatid) {
+	public Participant(String eventname, Integer eventid, Double eventcost, String date, Double prize, String podium, String boatname, Integer boatid) {
 		this.eventName = eventname;
 		this.eventID = eventid;
 		this.eventCost = eventcost;

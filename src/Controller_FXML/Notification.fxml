@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="940.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_FXML.Controller_Notification">
+   <children>
+      <ImageView fitHeight="118.0" fitWidth="288.0" layoutX="14.0" layoutY="14.0" preserveRatio="true">
+         <image>
+            <Image url="@../Icons/Logo.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="302.0" layoutY="115.0" prefHeight="18.0" prefWidth="337.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <TableView fx:id="notificationHistory" layoutX="120.0" layoutY="156.0" prefHeight="330.0" prefWidth="720.0">
+         <columns>
+            <TableColumn id="0" fx:id="Object" editable="false" prefWidth="201.0" text="Object" />
+            <TableColumn id="2" fx:id="Description" editable="false" prefWidth="121.0" text="Description" />
+            <TableColumn id="2" fx:id="remDays" editable="false" prefWidth="121.0" text="Remaining Days" />
+            <TableColumn id="2" fx:id="Amount" editable="false" prefWidth="121.0" text="Amount" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+</AnchorPane>

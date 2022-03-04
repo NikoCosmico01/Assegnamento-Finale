@@ -1,6 +1,8 @@
 package Controller_FXML;
 
 import java.io.IOException;
+
+import Objects.Person;
 import Socket.Client;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -31,7 +33,7 @@ public class Controller_SignUp {
 	private Scene scene;
 	private Parent rootParent;
     
-    public void signUp(ActionEvent event)throws IOException{
+    public void signUp(ActionEvent event)throws IOException, ClassNotFoundException{
     	String Name = NameText.getText();
     	String Surname = SurnameText.getText();
 		String Address = AddressText.getText();
@@ -46,14 +48,13 @@ public class Controller_SignUp {
 			
 			if (Client.is.readByte() == 0) {
 				if(passWord.equals(ConfPassWord)) {
-					Client.os.writeBytes(String.format("registration#%s#%s#%s#%s#1#%s#%s\n", Name, Surname, Address, CF, userName, passWord));
-					Client.os.flush();
-					FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
 					rootParent = loader.load();
+					Controller_Pay Pay = loader.getController();
+					Person P = null;
 					stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 					scene = new Scene(rootParent);
-					stage.setScene(scene);
-					stage.show();
+					Pay.initialize(P, "membFee", 119.90, Name + "#" + Surname + "#" + Address + "#" + CF + "#" + userName + "#" + passWord, stage, scene);
 				} else {
 					error.setTextFill(Color.DARKRED);
 					error.setText("Password Doesn't Match");

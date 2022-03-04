@@ -3,7 +3,7 @@ package Controller_FXML;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import People.Person;
+import Objects.Person;
 import Socket.Client;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -34,7 +34,8 @@ public class Controller_LogIN {
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
 		
-
+		//passWord = "Prova";
+		
 		if (!userName.isBlank() && !passWord.isBlank()) {
 			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
 			Client.os.flush();

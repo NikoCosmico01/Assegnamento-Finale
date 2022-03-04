@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 public class ClientHandler implements Runnable {
 
@@ -47,7 +48,7 @@ public class ClientHandler implements Runnable {
 				}else if (command[0].equals("addPaymentMethod")) {
 					Server.addPaymentMethod(command[1], command[2], command[3], command[4], command[5]);
 				}else if (command[0].equals("addPayment")) {
-					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], command[4], Integer.parseInt(command[5]), command[6], command[7]);
+					Server.addPayment(command[1], Integer.parseInt(command[2]), command[3], command[4], Integer.parseInt(command[5]), command[6], Double.parseDouble(command[7]), command[8]);
 				}else if (command[0].equals("addBoat")) {
 					Server.addBoat(os, command[1], command[2], Double.parseDouble(command[3]));
 				}else if (command[0].equals("retrievePaymentMethods")) {
@@ -58,10 +59,23 @@ public class ClientHandler implements Runnable {
 					Server.getAllParticipants(os, Integer.parseInt(command[1]));
 				}else if (command[0].equals("setPodium")) {
 					Server.setPodium(Integer.parseInt(command[1]), command[2]);
+				}else if (command[0].equals("retrievePaymentHistory")) {
+					Server.retrievePaymentHistory(os, command[1]);
+				}else if (command[0].equals("checkNotifications")) {
+					Server.checkNotifications(os, command[1]);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
 			System.out.println("[SERVER] Closing ClientHandler " + e.getMessage());
+			try {
+				Server.emptyNotifications();
+			} catch (ClassNotFoundException | SQLException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			
 		}

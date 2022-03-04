@@ -1,8 +1,8 @@
-package Payment;
+package Objects;
 
 import java.io.Serializable;
 
-public class Pay implements Serializable {
+public class PaymentMethod implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String CF;
@@ -11,7 +11,7 @@ public class Pay implements Serializable {
 	private String CV2;
 	private String Iban;
 	
-	public Pay() {
+	public PaymentMethod() {
 		this.id = 0;
 		this.CF = "";
 		this.N_CreditCard = "";
@@ -19,7 +19,7 @@ public class Pay implements Serializable {
 		this.CV2 = "";
 		this.Iban = "";
 	}
-	public Pay(Integer id, String cf, String N_creditCard, String exp, String CV2, String iban) {
+	public PaymentMethod(Integer id, String cf, String N_creditCard, String exp, String CV2, String iban) {
 		this.id = id;
 		this.CF = cf;
 		this.N_CreditCard = N_creditCard;

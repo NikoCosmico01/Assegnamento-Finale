@@ -3,7 +3,7 @@ package Controller_FXML;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import Objects.Participant;
+import Objects.PayIstance;
 import Socket.Client;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,14 +17,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-public class Controller_History {
+public class Controller_PaymentHistory {
 	
-    @FXML private TableColumn<Participant, Integer> eventBoats;
-    @FXML private TableColumn<Participant, String> eventDate;
-    @FXML private TableView<Participant> eventList;
-    @FXML private TableColumn<Participant, String> eventName;
-    @FXML private TableColumn<Participant, String> eventPodium;
-    @FXML private TableColumn<Participant, Double> eventPrize;
+	@FXML private TableColumn<PayIstance, String> payMeth;
+    @FXML private TableColumn<PayIstance, Double> payAmount;
+    @FXML private TableColumn<PayIstance, String> payBoat;
+    @FXML private TableColumn<PayIstance, String> payDesc;
+    @FXML private TableColumn<PayIstance, String> payExec;
+    @FXML private TableView<PayIstance> payHistory;
 	
 	private Stage stage;
 	private Scene scene;
@@ -34,17 +34,17 @@ public class Controller_History {
 
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		Cod_F = CF;
-		eventName.setCellValueFactory(new PropertyValueFactory<>("eventName"));
-		eventBoats.setCellValueFactory(new PropertyValueFactory<>("boatName"));
-		eventDate.setCellValueFactory(new PropertyValueFactory<>("eventDate"));
-		eventPrize.setCellValueFactory(new PropertyValueFactory<>("eventPrize"));
-		eventPodium.setCellValueFactory(new PropertyValueFactory<>("eventPodium"));
-		Client.os.writeBytes("retrieveCompetitions#" + Cod_F + "\n");
+		payMeth.setCellValueFactory(new PropertyValueFactory<>("paymentMethod"));
+		payAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
+		payBoat.setCellValueFactory(new PropertyValueFactory<>("boatName"));
+		payDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
+		payExec.setCellValueFactory(new PropertyValueFactory<>("currDate"));
+		Client.os.writeBytes("retrievePaymentHistory#" + Cod_F + "\n");
 		Client.os.flush();
-		Participant P = (Participant) Client.is.readObject();
+		PayIstance P = (PayIstance) Client.is.readObject();
 		while(P != null){
-			eventList.getItems().add(P);
-			P = (Participant) Client.is.readObject();
+			payHistory.getItems().add(P);
+			P = (PayIstance) Client.is.readObject();
 		}
 	}
 	
