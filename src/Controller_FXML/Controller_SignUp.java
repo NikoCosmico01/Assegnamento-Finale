@@ -54,7 +54,7 @@ public class Controller_SignUp {
 					Person P = null;
 					stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 					scene = new Scene(rootParent);
-					Pay.initialize(P, "membFee", 119.90, Name + "#" + Surname + "#" + Address + "#" + CF + "#" + userName + "#" + passWord, stage, scene);
+					Pay.initialize(P, "membFee", 119.90, Name + "#" + Surname + "#" + Address + "#" + CF + "#" + userName + "#" + passWord, stage, scene, 0);
 				} else {
 					error.setTextFill(Color.DARKRED);
 					error.setText("Password Doesn't Match");

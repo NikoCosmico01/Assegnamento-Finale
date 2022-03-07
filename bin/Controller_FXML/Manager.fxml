@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -8,43 +9,83 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="940.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="940.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller_FXML.Controller_Manager">
    <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="306.0" layoutX="645.0" layoutY="159.0" stroke="WHITE" strokeType="INSIDE" width="220.0">
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0" startX="0.6136363654425651" startY="0.41287877342917706">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="1.0" green="0.5925925970077515" blue="0.5925925970077515" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="1.0" green="1.0" blue="1.0" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Rectangle>
       <ImageView fitHeight="118.0" fitWidth="288.0" layoutX="24.0" layoutY="24.0" preserveRatio="true">
          <image>
             <Image url="@../Icons/Logo.png" />
          </image>
       </ImageView>
-      <Label layoutX="657.0" layoutY="129.0" text="New Events">
+      <Label layoutX="706.0" layoutY="184.0" text="New Events">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label layoutX="265.0" layoutY="133.0" text="Events">
+      <Label layoutX="292.0" layoutY="118.0" text="Events">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TableView layoutX="50.0" layoutY="165.0" prefHeight="362.0" prefWidth="474.0">
+      <TableView fx:id="eventList" layoutX="77.0" layoutY="150.0" prefHeight="159.0" prefWidth="474.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Name" />
-            <TableColumn prefWidth="75.0" text="N Max" />
-            <TableColumn prefWidth="75.0" text="Price" />
-            <TableColumn prefWidth="75.0" text="Date" />
-            <TableColumn prefWidth="75.0" text="SubAmount" />
+          <TableColumn fx:id="eventName" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="eventPrice" prefWidth="75.0" text="Price" />
+            <TableColumn fx:id="eventDate" prefWidth="75.0" text="Date" />
+            <TableColumn fx:id="eventSubAmount" prefWidth="75.0" text="SubAmount" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <TextField layoutX="631.0" layoutY="178.0" promptText="Name" />
-      <TextField layoutX="631.0" layoutY="222.0" promptText="Max Partecipants" />
-      <TextField layoutX="631.0" layoutY="270.0" promptText="Price" />
-      <TextField layoutX="631.0" layoutY="317.0" promptText="Subscrition Amount" />
-      <Button layoutX="669.0" layoutY="375.0" mnemonicParsing="false" text="New Event" />
-      <Button layoutX="851.0" layoutY="20.0" mnemonicParsing="false" style="-fx-background-color: RED;" text="LogOut" textFill="WHITE" />
-      <Button layoutX="464.0" layoutY="536.0" mnemonicParsing="false" style="-fx-background-color: RED;" text="Remove" textFill="WHITE" />
+      <TextField fx:id="newEventName" layoutX="680.0" layoutY="233.0" promptText="Name" AnchorPane.topAnchor="233.0" />
+      <TextField fx:id="newEventPrice" layoutX="680.0" layoutY="318.0" promptText="Win Price" />
+      <TextField fx:id="newEventSubAmount" layoutX="680.0" layoutY="362.0" promptText="Subscrition Amount" />
+      <Button layoutX="718.0" layoutY="406.0" mnemonicParsing="false" onAction="#addEvent" text="New Event" />
+      <Button layoutX="490.0" layoutY="321.0" mnemonicParsing="false" onAction="#Remove" style="-fx-background-color: RED;" text="Remove" textFill="WHITE" />
+      <DatePicker fx:id="newEventDate" layoutX="680.0" layoutY="274.0" prefHeight="26.0" prefWidth="150.0" promptText="Event Date" />
+      <TableView fx:id="infoList" layoutX="76.0" layoutY="358.0" prefHeight="159.0" prefWidth="474.0">
+         <columns>
+            <TableColumn fx:id="boatName" prefWidth="75.0" text="Boat Name" />
+            <TableColumn fx:id="boatLength" prefWidth="75.0" text="Boat Length" />
+            <TableColumn fx:id="boatOwner" prefWidth="75.0" text="Owner" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="107.0" layoutY="325.0" prefHeight="18.0" prefWidth="337.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button layoutX="871.0" layoutY="14.0" mnemonicParsing="false" onAction="#logOut" style="-fx-background-color: RED;" text="LogOut" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Candara Light" size="12.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
 				} else if (command[0].equals("retrieveBoats")) {
 					Server.retrieveBoats(os, command[1]);
 				} else if (command[0].equals("registration")) {
-					Server.addPartner(command[1], command[2], command[3], command[4], Integer.parseInt(command[5]), command[6], command[7]);
+					Server.addPartner(command[1], command[2], command[3], command[4], command[5], command[6]);
 				} else if (command[0].equals("checkUser")) {
 					Server.checkUserExistance(os, command[1]);
 				} else if (command[0].equals("retrieveCompetitions")) {
@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable {
 				}else if (command[0].equals("retrievePaymentMethods")) {
 					Server.retrievePaymentMethods(os, command[1]);
 				}else if (command[0].equals("deleteSubscription")) {
-					Server.deleteSubscription(os, Integer.parseInt(command[1]));
+					Server.deleteSubscription(os, Integer.parseInt(command[1]), Integer.parseInt(command[2]));
 				}else if (command[0].equals("getAllParticipants")) {
 					Server.getAllParticipants(os, Integer.parseInt(command[1]));
 				}else if (command[0].equals("setPodium")) {
@@ -65,7 +65,14 @@ public class ClientHandler implements Runnable {
 					Server.checkNotifications(os, command[1]);
 				}else if (command[0].equals("getNotifications")) {
 					Server.getNotifications(os);
+				}else if (command[0].equals("getEvents")) {
+					Server.getEvents(os);
+				}else if (command[0].equals("deleteCompetition")) {
+					Server.deleteEvent(os, Integer.parseInt(command[1]));
+				}else if (command[0].equals("createEvent")) {
+					Server.createEvent(os, command[1], Double.parseDouble(command[2]), Double.parseDouble(command[3]), command[4]);
 				}
+				
 			}
 		} catch (IOException | ClassNotFoundException | SQLException | NumberFormatException | InterruptedException e) {
 			System.out.println("[SERVER] Closing ClientHandler " + e.getMessage());

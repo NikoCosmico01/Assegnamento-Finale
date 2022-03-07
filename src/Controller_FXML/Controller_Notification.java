@@ -1,17 +1,9 @@
 package Controller_FXML;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
 
-import Objects.Boat;
-import Objects.Message;
 import Objects.Notification;
-import Objects.Participant;
 import Objects.Person;
 import Socket.Client;
 import javafx.animation.PauseTransition;
@@ -22,10 +14,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -57,15 +45,41 @@ public class Controller_Notification {
 		Client.os.writeBytes("getNotifications#0\n");
 		Client.os.flush();
 		Notification N = (Notification) Client.is.readObject();
-		System.out.println("Riceve");
 		while(N != null){
 			notificationHistory.getItems().add(N);
 			N = (Notification) Client.is.readObject();
 		}
 	}
 
+	public void Pay(ActionEvent event) throws IOException, ClassNotFoundException{
+		try {
+			Notification chosenNotification = notificationHistory.getSelectionModel().getSelectedItem();
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));
+			rootParent = loader.load();
+			Controller_Pay Pay = loader.getController();
+			Client.os.writeBytes("retrievePerson#" + Cod_F + "\n");
+			Client.os.flush();
+			Person P = (Person) Client.is.readObject();
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(rootParent);
+			if (chosenNotification.getObjectString().equals("Boat Addon")) {
+				System.out.println("Ecco Boat");
+				Pay.initialize(P, "boatFee", chosenNotification.getAmount(),  chosenNotification.getID_Boat() + "#"+ chosenNotification.getLength(), stage, scene, 1);
+			} else if (chosenNotification.getObjectString().equals("Membership Registration")) {
+				Pay.initialize(null, "membFee", 109.90, P.getName() + "#" + P.getSurname() + "#" + P.getAddress() + "#" + P.getCF() + "#" + P.getUserName() + "#" + P.getPassWord(), stage, scene, 1);
+			}
+		} catch (NullPointerException ex) {
+			error.setTextFill(Color.DARKRED);
+			error.setText("Select A Notification");
+			error.setVisible(true);
+			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+			visiblePause.setOnFinished(Event -> error.setVisible(false));
+			visiblePause.play();
+		}
+	}
+
 	@FXML
-	void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	private void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
 		rootParent = loader.load();
 		Controller_Partner Partner = loader.getController();

@@ -104,13 +104,11 @@ public class Controller_Partner {
 				}
 			}
 		}
-
 		Client.os.writeBytes("checkNotifications#" + Cod_F + "\n");
 		Client.os.flush();
 		if (Client.is.readByte() == 1) {
 			notificationPopUp.setVisible(true);
-		}
-		
+		}		
 	}
 
 	public void addBoat(ActionEvent event) throws IOException {
@@ -181,7 +179,11 @@ public class Controller_Partner {
 	public void deleteSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Participant chosenEvent = eventList.getSelectionModel().getSelectedItem();
-			Client.os.writeBytes(String.format("deleteSubscription#%d\n", chosenEvent.getEventID()));
+			if (chosenEvent.getBoatID() == null) {
+				Client.os.writeBytes(String.format("deleteSubscription#%d#%d\n", chosenEvent.getEventID(), 0));
+			} else {
+				Client.os.writeBytes(String.format("deleteSubscription#%d#%d\n", chosenEvent.getEventID(), chosenEvent.getBoatID()));
+			}
 			Client.os.flush();
 			Message M = (Message) Client.is.readObject();
 			if (M.getMsg().equals("OK")) {
@@ -235,7 +237,7 @@ public class Controller_Partner {
 				Person P = (Person) Client.is.readObject();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				Pay.initialize(P, "compFee", chosenEvent.getEventCost(), chosenBoat.getID() + "#" + chosenEvent.getEventID(), stage, scene);
+				Pay.initialize(P, "compFee", chosenEvent.getEventCost(), chosenBoat.getID() + "#" + chosenEvent.getEventID(), stage, scene, 0);
 			} else if (M.getMsg().equals("CSE")) {
 				error.setTextFill(Color.DARKRED);
 				error.setText("Competition Still Subscripted");
@@ -302,8 +304,8 @@ public class Controller_Partner {
 	public void Notification(ActionEvent event) throws IOException, ClassNotFoundException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Notification.fxml"));
 		rootParent = loader.load();
-		Controller_Notification notification = loader.getController();
-		notification.initialize(Cod_F);
+		Controller_Notification notificationController = loader.getController();
+		notificationController.initialize(Cod_F);
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		scene = new Scene(rootParent);
 		stage.setScene(scene);

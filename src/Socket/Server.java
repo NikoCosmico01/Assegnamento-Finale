@@ -71,17 +71,16 @@ public class Server {
 		disconnect();
 	}
 
-	public static void addPartner (String name, String surname, String address, String cf, Integer id_club, String username, String password) throws SQLException, ClassNotFoundException, IOException {
+	public static void addPartner (String name, String surname, String address, String cf, String username, String password) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO Person(Name, Surname, Address, CF, ID_Club, UserName, PassWord) VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO Person(Name, Surname, Address, CF, UserName, PassWord) VALUES (?,?,?,?,?,?)");
 			statement.setString(1, name);
 			statement.setString(2, surname);
 			statement.setString(3, address);
 			statement.setString(4, cf);
-			statement.setInt(5, id_club);
-			statement.setString(6, username);
-			statement.setString(7, password);
+			statement.setString(5, username);
+			statement.setString(6, password);
 			statement.execute();
 		} catch (SQLException e) {
 			System.out.println("addPartner Error: " + e.getMessage());
@@ -99,12 +98,12 @@ public class Server {
 		}
 		disconnect();
 	}
-	
+
 	public static void checkNotifications (ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException, ParseException {
 		Server.emptyNotifications();
-		
+
 		initializeConnection();
-		
+
 		Statement stmt = connection.createStatement();
 
 		Date currDate = new Date(System.currentTimeMillis());
@@ -133,8 +132,9 @@ public class Server {
 				}
 			} if (checkInteger == 1) {
 				os.writeByte(1);
-				os.flush();
-			}
+			} else {
+				os.writeByte(0);
+			} os.flush();
 		} catch (SQLException e) {
 			System.out.println("checkNotifications Error: " + e.getMessage());
 		}
@@ -231,14 +231,35 @@ public class Server {
 		}
 		disconnect();
 	}
-	
+
 	public static void getNotifications(ObjectOutputStream os) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
 		try {
-			ResultSet rs = stmt.executeQuery("SELECT N.stringObject, N.Description, N.remDays, P.Amount FROM Notification N, PaymentHistory P WHERE P.ID = N.ID_Payment;");
+			ResultSet rs = stmt.executeQuery("SELECT N.stringObject, N.Description, N.remDays, P.Amount, N.ID_Payment, P.ID_Boat, B.Length FROM Notification N, PaymentHistory P, Boat B WHERE P.ID = N.ID_Payment AND B.ID = P.ID_Boat;");
 			while (rs.next()) {
-				os.writeObject(new Notification(rs.getString("stringObject"), rs.getString("Description"), rs.getInt("remDays"), rs.getDouble("Amount")));
+				if (rs.getString("stringObject").equals("Boat Addon")) {
+					os.writeObject(new Notification(rs.getString("stringObject"), rs.getString("Description"), rs.getInt("remDays"), rs.getDouble("Amount"), rs.getInt("ID_Boat"), rs.getDouble("Length")));
+				} else if (rs.getString("stringObject").equals("Membership Registration")) {
+					os.writeObject(new Notification(rs.getString("stringObject"), rs.getString("Description"), rs.getInt("remDays"), rs.getDouble("Amount"), 0, 0.0));
+				}
+				os.flush();
+			}
+			os.writeObject(null);
+			os.flush();
+		} catch (SQLException e) {
+			System.out.println("getNotification Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
+	public static void getEvents(ObjectOutputStream os) throws SQLException, ClassNotFoundException, IOException {
+		initializeConnection();
+		Statement stmt = connection.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT Name, ID, Cost, Date, WinPrice FROM Competition");
+			while (rs.next()) {
+				os.writeObject(new Participant(rs.getString("Name"),rs.getInt("ID"),rs.getDouble("Cost"),rs.getString("Date"),rs.getDouble("WinPrice")));
 				os.flush();
 			}
 			os.writeObject(null);
@@ -375,13 +396,13 @@ public class Server {
 	}
 
 
-	public static void deleteSubscription(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
+	public static void deleteSubscription(ObjectOutputStream os, Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
-			ResultSet rs = statementI.executeQuery("SELECT * FROM Participants WHERE ID_Competition = " + eventID + ";");
+			ResultSet rs = statementI.executeQuery("SELECT * FROM Participants WHERE ID_Competition = " + eventID + " AND ID_Boat = \"" + boatID + "\";");
 			while (rs.next() == true) {
-				PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Participants WHERE ID_Competition = " + eventID + ";");
+				PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Participants WHERE ID_Competition = " + eventID + " AND ID_Boat = " + boatID + ";");
 				stmtI.executeUpdate();
 				os.writeObject(new Message("OK"));
 				os.flush();
@@ -396,6 +417,17 @@ public class Server {
 		disconnect();
 	}
 
+	public static void deleteEvent(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
+		initializeConnection();
+		try {
+			PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Competition WHERE ID = " + eventID + ";");
+			stmtI.executeUpdate();
+		} catch (Exception e) {
+			System.err.println("sendSubscription Check-Existance Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+
 	public static void addEvent(ObjectOutputStream os, Integer eventID, Integer boatID) throws SQLException, ClassNotFoundException {
 		initializeConnection();
 		Statement statement = connection.createStatement();
@@ -403,6 +435,17 @@ public class Server {
 			statement.executeUpdate("INSERT INTO Participants(ID_Boat, ID_Competition) VALUES (" + boatID + "," + eventID + ");");
 			os.writeObject(new Message(String.valueOf(boatID) + "#" + String.valueOf(eventID)));
 			os.flush();
+		} catch (Exception e) {
+			System.err.println("Insert sendSubscription Error: " + e.getMessage());
+		}
+		disconnect();
+	}
+	
+	public static void createEvent(ObjectOutputStream os, String Name, Double Prize, Double Cost, String Date) throws SQLException, ClassNotFoundException {
+		initializeConnection();
+		Statement statement = connection.createStatement();
+		try {
+			statement.executeUpdate("INSERT INTO Competition(Name, ID, Cost, Date, WinPrice, Podium) VALUES (\"" + Name + "\"," + null + "," + Cost + "," + Date + ",\"" + Prize + "\"," + 0 + ");");
 		} catch (Exception e) {
 			System.err.println("Insert sendSubscription Error: " + e.getMessage());
 		}

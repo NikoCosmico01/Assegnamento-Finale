@@ -72,14 +72,17 @@ public class Controller_Pay {
 	private static String userNameString;
 	private static String passWordString;
 	private static String boatName;
-	private static Double boatLength;
 	private static Integer boatID;
+	private static Double boatLength;
 	private static Integer compID;
+	private static Integer checkerInteger;
 
-	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription, Stage stage, Scene scene) throws IOException, ClassNotFoundException {    
+	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription, Stage stage, Scene scene, Integer checker) throws IOException, ClassNotFoundException {    
 
 		String[] description = paymentDescription.split("#");
 
+		checkerInteger = checker;
+		
 		purposeToggleGroup = new ToggleGroup();
 		this.boatFee.setToggleGroup(purposeToggleGroup); //boatName#boatLenght
 		this.compFee.setToggleGroup(purposeToggleGroup); //boatId#compId
@@ -103,9 +106,15 @@ public class Controller_Pay {
 			boatFee.setDisable(true);
 			membFee.setSelected(true);
 		}
-		if (paymentPurpose.equals("boatFee")) {
+		if (paymentPurpose.equals("boatFee") && checkerInteger == 0) {
 			boatName = description[0];
 			boatLength = Double.parseDouble(description[1]);
+			compFee.setDisable(true);
+			membFee.setDisable(true);
+			boatFee.setDisable(true);
+			boatFee.setSelected(true);
+		} else if (paymentPurpose.equals("boatFee") && checkerInteger == 1) {
+			boatID = Integer.parseInt(description[0]);
 			compFee.setDisable(true);
 			membFee.setDisable(true);
 			boatFee.setDisable(true);
@@ -180,7 +189,7 @@ public class Controller_Pay {
 			}
 			PayMet = (PaymentMethod) Client.is.readObject();
 		}
-
+		
 		stage.setScene(scene);
 		stage.show();
 
@@ -310,18 +319,20 @@ public class Controller_Pay {
 			if (cardRadio.isSelected()) { payNumberString = cardNumber;
 			} else { payNumberString = IBAN; }
 			String finalNumberString;
-			System.out.println(payNumberString.length());
 			if (payNumberString.length() == 27) {
 				finalNumberString = "IBAN That Ends With " + payNumberString.substring(payNumberString.length()-4);
 			} else if (payNumberString.length() == 16) {
 				finalNumberString = "CARD That Ends With " + payNumberString.substring(payNumberString.length()-4);
 			} else {
 				throw new IllegalArgumentException("Error!");
-			} if (boatFee.isSelected()) {
+			} if (boatFee.isSelected() && checkerInteger == 0) {
 				Client.os.writeBytes("addBoat#" + Cod_F + "#" + boatName + "#" + boatLength + "\n");
 				Client.os.flush();
 				Message M = (Message) Client.is.readObject();
 				Client.os.writeBytes("addPayment#" + Cod_F + "#" + M.getMsg() + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + 0 + "#" + "Boat Addon" + "#" + Double.parseDouble(price.getText()) + "#" + finalNumberString + "\n");
+				Client.os.flush();
+			} else if (boatFee.isSelected() && checkerInteger == 1) {
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + boatID + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + 0 + "#" + "Boat Fee Renewal" + "#" + Double.parseDouble(price.getText()) + "#" + finalNumberString + "\n");
 				Client.os.flush();
 			} else if (compFee.isSelected()) {
 				Client.os.writeBytes(String.format("addEvent#%d#%d\n", compID, boatID));
@@ -330,10 +341,13 @@ public class Controller_Pay {
 				String[] description = M.getMsg().split("#");
 				Client.os.writeBytes("addPayment#" + Cod_F + "#" + description[0] + "#" + formatter.format(date) + "#" + null + "#" + description[1] + "#" + "Competition Addon" + "#" + Double.parseDouble(price.getText()) + "#" + finalNumberString + "\n");
 				Client.os.flush();
-			} else if (membFee.isSelected()) {
-				Client.os.writeBytes(String.format("registration#%s#%s#%s#%s#1#%s#%s\n", nameString, surnameString, addressString, Cod_F, userNameString, passWordString));
+			} else if (membFee.isSelected() && checkerInteger == 0) {
+				Client.os.writeBytes(String.format("registration#%s#%s#%s#%s#%s#%s\n", nameString, surnameString, addressString, Cod_F, userNameString, passWordString));
 				Client.os.flush();
 				Client.os.writeBytes("addPayment#" + Cod_F + "#" + 0 + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + 0 + "#" + "Membership Registration" + "#" + Double.parseDouble(price.getText()) + "#" + finalNumberString + "\n");
+				Client.os.flush();
+			} else if (membFee.isSelected() && checkerInteger == 1) {
+				Client.os.writeBytes("addPayment#" + Cod_F + "#" + 0 + "#" + formatter.format(date) + "#" + formatter.format(expDate) + "#" + 0 + "#" + "Membership Fee Renewal" + "#" + Double.parseDouble(price.getText()) + "#" + finalNumberString + "\n");
 				Client.os.flush();
 			}
 			//Return To Home

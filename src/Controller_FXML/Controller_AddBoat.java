@@ -75,7 +75,7 @@ public class Controller_AddBoat {
 				Person P = (Person) Client.is.readObject();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
-				Pay.initialize(P, "boatFee", Double.parseDouble(bLength)*10, bName + "#" + bLength, stage, scene);
+				Pay.initialize(P, "boatFee", Double.parseDouble(bLength)*10, bName + "#" + bLength, stage, scene, 0);
 				
 				
 			} else if (M.getMsg().equals("KO")) {

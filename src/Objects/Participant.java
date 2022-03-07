@@ -37,6 +37,14 @@ public class Participant implements Serializable {
 		this.boatID = boatid;
 	}
 
+	public Participant(String eventname, Integer ID, Double eventcost, String date, Double prize) {
+		this.eventName = eventname;
+		this.eventCost = eventcost;
+		this.eventID = ID;
+		this.eventDate = date;
+		this.eventPrize = prize;
+	}
+	
 	public String getEventName() {
 		return this.eventName;
 	}

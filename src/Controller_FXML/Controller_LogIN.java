@@ -59,7 +59,14 @@ public class Controller_LogIN {
 				Platform.runLater( () -> rootParent.requestFocus() );
 				stage.show();
 			} else if (P.getManager() == 1){
-				System.out.println("Log Manager");
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("Manager.fxml"));
+				rootParent = loader.load();
+				Controller_Manager Manager = loader.getController();
+				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+				scene = new Scene(rootParent);
+				stage.setScene(scene);
+				Platform.runLater( () -> rootParent.requestFocus() );
+				stage.show();
 			}
 		}else {
 			error.setTextFill(Color.WHITE);
