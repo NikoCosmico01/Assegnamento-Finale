@@ -24,6 +24,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class has the purpose to manage the Manager GUI, it populates the tableview and allows the manager to delete or add a competition.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_Manager {
 
 	@FXML private TableColumn<Boat, Double> boatLength;
@@ -45,6 +52,14 @@ public class Controller_Manager {
 	private Scene scene;
 	private Parent rootParent;
 
+	/**
+	 * This is the first method that is called when a manager logs in, its purpose is to fill in the tableview with all the
+	 * existing competitions.
+	 * 
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public void initialize() throws IOException, ClassNotFoundException {
 		eventName.setCellValueFactory(new PropertyValueFactory<>("eventName"));
 		eventPrice.setCellValueFactory(new PropertyValueFactory<>("eventPrize"));
@@ -66,6 +81,12 @@ public class Controller_Manager {
         		}});
 	}
 
+	/**
+	 * This method is called when the "Add Event" button is pressed, it checks if all the fields have been correctly filled and, if yes,
+	 * if proceed to adding the newly inserted competition into the database.
+	 * 
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	private void addEvent() throws IOException {
 		String Name = newEventName.getText();
@@ -91,6 +112,14 @@ public class Controller_Manager {
 		}
 	}
 
+	/**
+	 * This method is called when the remove button is pressed; then the system will remove the selected competition from the database but,
+	 * if no competition is selected, it will show an error.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	private void Remove(ActionEvent event) throws IOException, ClassNotFoundException {
 		try {
@@ -110,6 +139,13 @@ public class Controller_Manager {
 		initialize();
 	}
 
+	/**
+	 * This method is called then the "LOGOUT" button is pressed, it logs out from the system and returns the user to the initial login page
+	 * in order to start again.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	private void logOut(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));

@@ -17,6 +17,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+/**
+ * This class has the purpose to populate the Payment History GUI.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_PaymentHistory {
 	
 	@FXML private TableColumn<PayIstance, String> payMeth;
@@ -32,6 +39,15 @@ public class Controller_PaymentHistory {
 	
 	private static String Cod_F;
 
+	/**
+	 * This method populates the tableview with all the previous payment completed.
+	 * 
+	 * @param CF passed Fiscal Code
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		Cod_F = CF;
 		payMeth.setCellValueFactory(new PropertyValueFactory<>("paymentMethod"));
@@ -48,6 +64,14 @@ public class Controller_PaymentHistory {
 		}
 	}
 	
+	/**
+     * This method is called when the "Back" button is pressed and it will show you the previous page.
+     * 
+     * @param event GUI Click Event
+     * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+     */
 	@FXML
     void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));

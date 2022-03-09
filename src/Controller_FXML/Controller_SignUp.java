@@ -1,6 +1,7 @@
 package Controller_FXML;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import Objects.Person;
 import Socket.Client;
@@ -18,6 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class has the purpose to show all the option needed to add a new user.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_SignUp {
 
 	@FXML private TextField AddressText;
@@ -33,6 +41,14 @@ public class Controller_SignUp {
 	private Scene scene;
 	private Parent rootParent;
     
+	/**
+	 * This initialization class shows all the fields to be filled in order to sign up.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
     public void signUp(ActionEvent event)throws IOException, ClassNotFoundException{
     	String Name = NameText.getText();
     	String Surname = SurnameText.getText();
@@ -82,6 +98,12 @@ public class Controller_SignUp {
 
     }
     
+    /**
+     * This method is called when the "Back" button is pressed and it will show you the previous page.
+     * 
+     * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+     */
     @FXML
     void Back(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));

@@ -20,6 +20,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class is the first that appears when the client is started; it shows all the fields in order to allow the user or manager to log in the system.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_LogIN {
 
 	@FXML private TextField userNameField;
@@ -30,11 +37,20 @@ public class Controller_LogIN {
 	private Scene scene;
 	private Parent rootParent;	
 
+	/**
+	 * This method is the first that is called when the new page appears; it has the purpose to send the inserted credentials to the
+	 * database in order to check if the user/manager exists and, if yes, proceed to call the next appropriate page.
+	 * It also check if all the fields have been correctly filled and, if not, it shows an error.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public void login (ActionEvent event) throws SQLException, IOException, ClassNotFoundException{
 		String userName = userNameField.getText();
 		String passWord = passWordField.getText();
-		
-		//passWord = "Prova";
 		
 		if (!userName.isBlank() && !passWord.isBlank()) {
 			Client.os.writeBytes("connect#" + userName + "#" + passWord + "\n");
@@ -78,6 +94,13 @@ public class Controller_LogIN {
 		}
 	}
 
+	/**
+	 * This method is called when the registration button is pressed and return the user to the appropriate page in order
+	 * to let him sign up into the system.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	void registration (ActionEvent event) throws IOException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));

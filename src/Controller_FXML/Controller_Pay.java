@@ -30,6 +30,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class has the purpose to manage all the payment page and is called whenever a payment needs to be done.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_Pay {
 
 	@FXML private ToggleGroup Casual;
@@ -77,6 +84,22 @@ public class Controller_Pay {
 	private static Integer compID;
 	private static Integer checkerInteger;
 
+	/**
+	 * This initialization class fills all the user details in the payment form and managed the existing payment methods to be shown.
+	 * For each paymentPurpose there is a specified path to be followed in order to read properly the paymentDescription and toggle the
+	 * right radio buttons.
+	 * 
+	 * @param P Person Object
+	 * @param paymentPurpose Needed to pass a precise Purpose
+	 * @param paymentPrice Payment price
+	 * @param paymentDescription Needed to pass some Needed Arguments
+	 * @param stage Passed stage
+	 * @param scene Passed scene
+	 * @param checker Needed to specify if it is a fee Renewal or Not
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public void initialize(Person P, String paymentPurpose, Double paymentPrice, String paymentDescription, Stage stage, Scene scene, Integer checker) throws IOException, ClassNotFoundException {    
 
 		String[] description = paymentDescription.split("#");
@@ -142,11 +165,9 @@ public class Controller_Pay {
 			price.setText(String.valueOf(paymentPrice));
 		}
 		
-		
 		Client.os.writeBytes("retrievePaymentMethods#" + Cod_F + "\n");
 		Client.os.flush();
 		PaymentMethod PayMet = (PaymentMethod) Client.is.readObject();
-
 
 		while (PayMet != null) {
 			final PaymentMethod tempPay = PayMet;
@@ -195,6 +216,12 @@ public class Controller_Pay {
 
 	}
 
+	/**
+	 * This method is useful to set a max length on the fields relative to the IBAN, Card Number, Card Expiration and Card CVC.
+	 * 
+	 * @param textField Relative Text Field
+	 * @param maxLength Maximal Text Limiter
+	 */
 	public static void addTextLimiter(final TextField textField, final int maxLength) {
 		textField.textProperty().addListener((ChangeListener<? super String>) new ChangeListener<String>() {
 			public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
@@ -207,7 +234,7 @@ public class Controller_Pay {
 	}
 
 	@FXML
-	void showNewMethod() {
+	private void showNewMethod() {
 		cardRadio.setDisable(false);
 		cardRadio.setVisible(true);
 		ibanRadio.setDisable(false);
@@ -220,7 +247,7 @@ public class Controller_Pay {
 	}
 
 	@FXML
-	void paymentButtonChanged() {
+	private void paymentButtonChanged() {
 		if (this.paymentToggleGroup.getSelectedToggle().equals(this.cardRadio)) {
 			ibanField.setVisible(false);
 			cardNumberField.setVisible(true);
@@ -256,7 +283,7 @@ public class Controller_Pay {
 	}
 
 	@FXML
-	void resetBorder() {
+	private void resetBorder() {
 		cardNumberField.setStyle(null);
 		cvcField.setStyle(null);
 		expiryMonthField.setStyle(null);
@@ -264,7 +291,7 @@ public class Controller_Pay {
 		ibanField.setStyle(null);
 	}
 	
-	static boolean isNumeric(String strNum) {
+	private static boolean isNumeric(String strNum) {
 	    if (strNum == null) {
 	        return false;
 	    }
@@ -277,7 +304,7 @@ public class Controller_Pay {
 	}
 
 	@FXML
-	void Submit(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	private void Submit(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		String cardNumber = cardNumberField.getText();
 		String cardCVC = cvcField.getText();
 		String cardMonthExpiry = expiryMonthField.getText();
@@ -378,6 +405,14 @@ public class Controller_Pay {
 	private Scene scene;
 	private Parent rootParent;	
 
+	/**
+     * This method is called when the "Back" button is pressed and it will show you the previous page.
+     * 
+     * @param event GUI Click Event
+     * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+     */
 	@FXML
 	void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		if (compFee.isSelected()) {

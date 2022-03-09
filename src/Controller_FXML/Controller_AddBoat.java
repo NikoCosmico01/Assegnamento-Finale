@@ -20,6 +20,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class contains all the method used inside the AddBoat GUI, when all the boat information are added by the user and the "SUBMIT" button
+ * is pressed, it will redirect the user to the Pay GUI in which the payment must be satisfied in order to successfully add the boat to the Database.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_AddBoat {
 
 	private static String Cod_F;
@@ -32,6 +40,14 @@ public class Controller_AddBoat {
     @FXML private TextField boatLength;
     @FXML private TextField boatName;
 
+    /**
+     * This method is called when the "Back" button is pressed and it will show you the previous page.
+     * 
+     * @param event GUI Click Event
+     * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+     */
     @FXML
     void Back(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("Partner.fxml"));
@@ -45,6 +61,14 @@ public class Controller_AddBoat {
 		stage.show();
     }
 
+    /**
+     * This method is the one that is called when the "SUBMIT" button is pressed, it checks if all the fields have been
+     * correctly filled, if the boat name inserted is still inside the database and, then, it submit all the informations to the PAY page to proceed to the payment.
+     * 
+     * @param event GUI Click Event
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+     */
     @FXML
     void addBoat(ActionEvent event) throws IOException, ClassNotFoundException {
     	String bName = boatName.getText();
@@ -96,6 +120,11 @@ public class Controller_AddBoat {
 		}
     } 
     
+    /**
+     * This method is the first that is called when the new page appears.
+     * 
+     * @param CF Fiscal Code Passed
+     */
     public void initialize(String CF) {
     	Cod_F = CF;
     }

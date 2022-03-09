@@ -33,6 +33,14 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * This class is the most important, it contains all the logic in the user homepage.
+ * The user can add,remove boats, subscribe/unsubscribe from competitions, check if he has won a competition etc.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Controller_Partner {
 
 	@FXML private TableColumn<Boat, Double> boatLength;
@@ -51,6 +59,15 @@ public class Controller_Partner {
 
 	private static String Cod_F;
 
+	/**
+	 * This main class has the purpose to populate both the boat and competition tableviews and check if any notification has to be displayed.
+	 * 
+	 * @param CF passed Fiscal Code
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public void initialize(String CF) throws IOException, SQLException, ClassNotFoundException {
 		boatName.setCellValueFactory(new PropertyValueFactory<>("name"));
 		boatLength.setCellValueFactory(new PropertyValueFactory<>("length"));
@@ -111,6 +128,13 @@ public class Controller_Partner {
 		}		
 	}
 
+	/**
+	 * This method is invoked when the "ADD BOAT" button is pressed, it redirects the user to a new Page in order to add a new boat
+	 * and pay the requested fee.
+	 * 
+	 * @param event  GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	void addBoat(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
@@ -124,6 +148,14 @@ public class Controller_Partner {
 		stage.show();
 	}
 
+	/**
+	 * This method is invoked when a boat is selected and the "REMOVE BOAT" button is pressed, it also checks if that boat is subscripted to a running competition
+	 * and, if yes, it sends an alert.
+	 * 
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws SQLException Handles SQL Errors
+	 */
 	@FXML
 	void removeBoat() throws ClassNotFoundException, IOException, SQLException {
 		try {
@@ -178,6 +210,15 @@ public class Controller_Partner {
 		initialize(Cod_F);
 	}
 
+	/**
+	 * This method is invoked when a competition is selected and the "DELETE SUBSCRIPTION" button is pressed in order to 
+	 * delete that boat from the competition.
+	 * 
+	 * @param event  GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws SQLException Handles SQL Errors
+	 */
 	@FXML
 	void deleteSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
@@ -224,6 +265,14 @@ public class Controller_Partner {
 		initialize(Cod_F);
 	}
 
+	/**
+	 * This method is called when both a boat and a competition have been selected and the "SUBSCRIBE" button is pressed.
+	 * 
+	 * @param event  GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws SQLException Handles SQL Errors
+	 */
 	@FXML
 	void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
@@ -274,6 +323,14 @@ public class Controller_Partner {
 		}
 	}
 
+	/**
+	 * This method is called when the "SUBSCRIPTION MANAGEMENT" button is pressed in order to show the user more details on the subscribed competitions.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws SQLException Handles SQL Errors
+	 */
 	@FXML
 	void subscriptionManagement(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("History.fxml"));
@@ -286,6 +343,15 @@ public class Controller_Partner {
 		stage.show();
 	}
 
+	/**
+	 * This method is called when the "PAYMENT HISTORY" button is pressed in order to show the user all his payment history and
+	 * relative details.
+	 * 
+	 * @param event  GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws SQLException Handles SQL Errors
+	 */
 	@FXML
 	void paymentHistory(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("PaymentHistory.fxml"));
@@ -298,6 +364,13 @@ public class Controller_Partner {
 		stage.show();
 	}
 
+	/**
+	 * This method is called then the "LOGOUT" button is pressed, it logs out from the system and returns the user to the initial login page
+	 * in order to start again.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 	@FXML
 	void logOut(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));
@@ -308,6 +381,13 @@ public class Controller_Partner {
 		stage.show();
 	}
 	
+	/**
+	 * This method is called when the "NOTIFICATION BUTTON" is pressed and enter the page when you can see all the notifications.
+	 * 
+	 * @param event GUI Click Event
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
 	@FXML
 	void Notification(ActionEvent event) throws IOException, ClassNotFoundException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Notification.fxml"));
