@@ -1,23 +1,19 @@
 package Controller_FXML;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 import Objects.Boat;
-import Objects.Notification;
 import Objects.Participant;
-import Objects.Person;
 import Socket.Client;
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -61,12 +57,13 @@ public class Controller_Manager {
 			eventList.getItems().add(P);
 			P = (Participant) Client.is.readObject();
 		}
-	}
-
-	@FXML
-	private void getInfo(Participant P) {
-
-
+		LocalDate minDate = LocalDate.now();
+		newEventDate.setDayCellFactory(d ->
+        	new DateCell() {
+        		@Override public void updateItem(LocalDate item, boolean empty) {
+        			super.updateItem(item, empty);
+        			setDisable(item.isBefore(minDate));
+        		}});
 	}
 
 	@FXML
@@ -85,6 +82,12 @@ public class Controller_Manager {
 			LocalDate localDate = newEventDate.getValue();
 			Client.os.writeBytes("createEvent#" +  Name + "#" + prizeString + "#" + costString + "#" + localDate +"\n");
 			Client.os.flush();
+			error.setTextFill(Color.DARKGREEN);
+			error.setText("Event Correctly Added");
+			error.setVisible(true);
+			PauseTransition visiblePause = new PauseTransition(Duration.seconds(1.5));
+			visiblePause.setOnFinished(Event -> error.setVisible(false));
+			visiblePause.play();
 		}
 	}
 

@@ -8,18 +8,37 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+/**
+ * This class manages the messages received by the client and redirects them to the server calling a precise method.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class ClientHandler implements Runnable {
 
 	private Socket clientThread;
 	private ObjectOutputStream os;
 	private BufferedReader is;
 	
+	/**
+	 * It initializes the communication streams between the server and himself (clientHandler) and vice versa.
+	 * 
+	 * @param client It passes the Socket
+	 * @throws IOException Handles Input/Output Exception
+	 */
+	
 	public ClientHandler(Socket client) throws IOException {
 		this.clientThread = client;
 		is = new BufferedReader(new InputStreamReader(clientThread.getInputStream()));
 		os = new ObjectOutputStream(clientThread.getOutputStream());
 	}
-
+	
+	/**
+	 * That class represents the main class containing all the bytes Streams received by the client and forwarded to the
+	 * server directly calling the specified function with the relative arguments.
+	 */
+	
 	@Override
 	public void run() {
 		try {
@@ -32,7 +51,7 @@ public class ClientHandler implements Runnable {
 				} else if (command[0].equals("registration")) {
 					Server.addPartner(command[1], command[2], command[3], command[4], command[5], command[6]);
 				} else if (command[0].equals("checkUser")) {
-					Server.checkUserExistance(os, command[1]);
+					Server.checkUserExistence(os, command[1]);
 				} else if (command[0].equals("retrieveCompetitions")) {
 					Server.retriveCompetitions(os, command[1]);
 				} else if (command[0].equals("checkEvent")) {

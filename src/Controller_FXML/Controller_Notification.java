@@ -51,7 +51,8 @@ public class Controller_Notification {
 		}
 	}
 
-	public void Pay(ActionEvent event) throws IOException, ClassNotFoundException{
+	@FXML
+	void Pay(ActionEvent event) throws IOException, ClassNotFoundException{
 		try {
 			Notification chosenNotification = notificationHistory.getSelectionModel().getSelectedItem();
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Pay.fxml"));

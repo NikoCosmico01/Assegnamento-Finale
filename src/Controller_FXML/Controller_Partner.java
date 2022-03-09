@@ -111,7 +111,8 @@ public class Controller_Partner {
 		}		
 	}
 
-	public void addBoat(ActionEvent event) throws IOException {
+	@FXML
+	void addBoat(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("AddBoat.fxml"));
 		rootParent = loader.load();
 		Controller_AddBoat AddBoat = loader.getController();
@@ -123,7 +124,8 @@ public class Controller_Partner {
 		stage.show();
 	}
 
-	public void removeBoat() throws ClassNotFoundException, IOException, SQLException {
+	@FXML
+	void removeBoat() throws ClassNotFoundException, IOException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Integer boatID = chosenBoat.getID();
@@ -176,7 +178,8 @@ public class Controller_Partner {
 		initialize(Cod_F);
 	}
 
-	public void deleteSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	@FXML
+	void deleteSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Participant chosenEvent = eventList.getSelectionModel().getSelectedItem();
 			if (chosenEvent.getBoatID() == null) {
@@ -221,7 +224,8 @@ public class Controller_Partner {
 		initialize(Cod_F);
 	}
 
-	public void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	@FXML
+	void eventSubscription(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		try {
 			Boat chosenBoat = boatList.getSelectionModel().getSelectedItem();
 			Participant chosenEvent = eventList.getSelectionModel().getSelectedItem();
@@ -270,7 +274,8 @@ public class Controller_Partner {
 		}
 	}
 
-	public void subscriptionManagement(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	@FXML
+	void subscriptionManagement(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("History.fxml"));
 		rootParent = loader.load();
 		Controller_History History = loader.getController();
@@ -281,7 +286,8 @@ public class Controller_Partner {
 		stage.show();
 	}
 
-	public void paymentHistory(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	@FXML
+	void paymentHistory(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("PaymentHistory.fxml"));
 		rootParent = loader.load();
 		Controller_PaymentHistory History = loader.getController();
@@ -292,7 +298,8 @@ public class Controller_Partner {
 		stage.show();
 	}
 
-	public void logOut(ActionEvent event) throws IOException {
+	@FXML
+	void logOut(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("LogIN.fxml"));
 		rootParent = loader.load();
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -301,7 +308,8 @@ public class Controller_Partner {
 		stage.show();
 	}
 	
-	public void Notification(ActionEvent event) throws IOException, ClassNotFoundException{
+	@FXML
+	void Notification(ActionEvent event) throws IOException, ClassNotFoundException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Notification.fxml"));
 		rootParent = loader.load();
 		Controller_Notification notificationController = loader.getController();

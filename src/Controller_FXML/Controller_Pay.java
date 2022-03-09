@@ -206,7 +206,8 @@ public class Controller_Pay {
 		});
 	}
 
-	public void showNewMethod() {
+	@FXML
+	void showNewMethod() {
 		cardRadio.setDisable(false);
 		cardRadio.setVisible(true);
 		ibanRadio.setDisable(false);
@@ -218,7 +219,8 @@ public class Controller_Pay {
 		methodMenu.setText("+ Add Method");
 	}
 
-	public void paymentButtonChanged() {
+	@FXML
+	void paymentButtonChanged() {
 		if (this.paymentToggleGroup.getSelectedToggle().equals(this.cardRadio)) {
 			ibanField.setVisible(false);
 			cardNumberField.setVisible(true);
@@ -253,7 +255,8 @@ public class Controller_Pay {
 		}
 	}
 
-	public void resetBorder() {
+	@FXML
+	void resetBorder() {
 		cardNumberField.setStyle(null);
 		cvcField.setStyle(null);
 		expiryMonthField.setStyle(null);
@@ -261,7 +264,7 @@ public class Controller_Pay {
 		ibanField.setStyle(null);
 	}
 	
-	public static boolean isNumeric(String strNum) {
+	static boolean isNumeric(String strNum) {
 	    if (strNum == null) {
 	        return false;
 	    }
@@ -273,7 +276,8 @@ public class Controller_Pay {
 	    return true;
 	}
 
-	public void Submit(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
+	@FXML
+	void Submit(ActionEvent event) throws IOException, ClassNotFoundException, SQLException {
 		String cardNumber = cardNumberField.getText();
 		String cardCVC = cvcField.getText();
 		String cardMonthExpiry = expiryMonthField.getText();

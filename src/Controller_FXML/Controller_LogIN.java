@@ -61,7 +61,7 @@ public class Controller_LogIN {
 			} else if (P.getManager() == 1){
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("Manager.fxml"));
 				rootParent = loader.load();
-				Controller_Manager Manager = loader.getController();
+				loader.getController();
 				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 				scene = new Scene(rootParent);
 				stage.setScene(scene);
@@ -78,7 +78,8 @@ public class Controller_LogIN {
 		}
 	}
 
-	public void registration (ActionEvent event) throws IOException{
+	@FXML
+	void registration (ActionEvent event) throws IOException{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));
 		rootParent = loader.load();
 		stage = (Stage)((Node)event.getSource()).getScene().getWindow();

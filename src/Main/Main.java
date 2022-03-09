@@ -9,6 +9,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 
+/**
+ * This class is the Main one, from which the all program gui starts.
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Main extends Application {	
 	@Override
 	public void start(Stage primaryStage) throws IOException {
@@ -27,6 +34,11 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Initial Launch method.
+	 * 
+	 * @param args Passed Arguments
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

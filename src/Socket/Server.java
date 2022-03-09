@@ -15,8 +15,6 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-import com.mysql.cj.protocol.x.Notice;
-
 import Objects.Boat;
 import Objects.Message;
 import Objects.Notification;
@@ -25,18 +23,45 @@ import Objects.PaymentMethod;
 import Objects.PayIstance;
 import Objects.Person;
 
+/**
+ * This class represents the server which contains all the methods that can be called by the clientHandler (via the Client).
+ * 
+ * @author NicoT
+ *
+ */
+
 public class Server {
 	private static final int PORT = 9090;
 
 	private static Connection connection;
 	private static Statement statement;
 
+	/**
+	 * This method is called when we want to establish a connection to the mySQL Database.
+	 * 
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public static void initializeConnection() throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/sailingclub?user=root&password=");
 		statement = connection.createStatement();
 	}
 
+	/**
+	 * This method is called at the system startup, when someone wants to login (via username and password), it checks the Existence of these
+	 * credentials and returns the object {@code Person} containing all the informations about that user. If the recognized user has Manager instance equals to 1
+	 * than a specific page {@code Controller_Manager} will be shown.
+	 * 
+	 * @param os Output Stream Output Stream
+	 * @param userName written username 
+	 * @param passWord written password
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void checkLogin(ObjectOutputStream os, String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
@@ -54,7 +79,18 @@ public class Server {
 		disconnect();
 	}
 
-	public static void checkUserExistance(ObjectOutputStream os, String userName) throws SQLException, ClassNotFoundException, IOException {
+	/**
+	 * It checks whether if one user is still subscripted when someone wants to register {@code Controller_SignUp} and return a byte (1) if the
+	 * user is still in the database or (0) if not.
+	 * 
+	 * @param os Output Stream
+	 * @param userName the written username
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
+	public static void checkUserExistence(ObjectOutputStream os, String userName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\";");
@@ -66,10 +102,24 @@ public class Server {
 				os.flush();
 			}
 		} catch (SQLException e) {
-			System.out.println("checkUserExistance Error: " + e.getMessage());
+			System.out.println("checkUserExistence Error: " + e.getMessage());
 		}
 		disconnect();
 	}
+	
+	/**
+	 * It has the purpose to insert all the details of the registering user onto the database if all the fields have been properly filled.
+	 * 
+	 * @param name Partner name
+	 * @param surname Partner surname
+	 * @param address Partner address
+	 * @param cf Partner CF
+	 * @param username Partner userName
+	 * @param password Partner passWord
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void addPartner (String name, String surname, String address, String cf, String username, String password) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -88,6 +138,14 @@ public class Server {
 		disconnect();
 	}
 
+	/**
+	 * It empties the Notification database table when a user logs out because it would be updated on the next login.
+	 * 
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void emptyNotifications() throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try {
@@ -98,6 +156,18 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * It has the purpose to check if the expiring date of a precise payment is getting closer and, if yes, it will popup a notification
+	 * whenever that user logs in.
+	 * 
+	 * @param os Output Stream
+	 * @param CF passed CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws ParseException
+	 */
 
 	public static void checkNotifications (ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException, ParseException {
 		Server.emptyNotifications();
@@ -140,6 +210,19 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when, during the payment, the user decides to add a new payment method (both with Credit Card and IBAN).
+	 * 
+	 * @param cf owner CF
+	 * @param creditcard_id CC Number
+	 * @param expiration CC Expiration
+	 * @param cv2 CC CV2 Number
+	 * @param iban IBAN Number
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void addPaymentMethod (String cf, String creditcard_id, String expiration, String cv2, String iban) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -164,6 +247,23 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when a payment is successful and we want it to be added into the paymentHistory database table
+	 * with the relative details.
+	 * 
+	 * @param cf passed CF
+	 * @param id_boat passed Boat ID
+	 * @param date payment execution Date
+	 * @param expiration payment Expiration
+	 * @param id_competition passed Competition ID
+	 * @param description payment description
+	 * @param amount payment amount
+	 * @param payment payment method
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void addPayment (String cf, Integer id_boat, String date, String expiration, Integer id_competition, String description, Double amount, String payment) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -195,6 +295,19 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called whenever a user decides to add a new boat to his list. The boat addon is executed when the
+	 * boat storage fee is successfully payed.
+	 * 
+	 * @param os Output Stream
+	 * @param cf passed CF
+	 * @param boatName new Boat Name
+	 * @param boatLength new Boat Length
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void addBoat (ObjectOutputStream os, String cf, String boatName, Double boatLength) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -215,6 +328,17 @@ public class Server {
 		disconnect();
 	}
 
+	/**
+	 * This method is called all the times that the user enters the payment page and it loads all the payment methods
+	 * previously added in order to avoid the manual re-insert of these values.
+	 * 
+	 * @param os Output Stream
+	 * @param CF passed CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void retrievePaymentMethods(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
@@ -231,6 +355,15 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when a user logs in, it checks if the Notification database table is populated and, if yes, it warns the user.
+	 * 
+	 * @param os Output Stream
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void getNotifications(ObjectOutputStream os) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -252,6 +385,15 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called whenever a manager logs in and is used to display all the running competition onto the manager homepage.
+	 * 
+	 * @param os Output Stream
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void getEvents(ObjectOutputStream os) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -269,6 +411,16 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when a user wants to check his payment history {@code Controller_History}.
+	 * 
+	 * @param os Output Stream
+	 * @param CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void retrievePaymentHistory(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -289,6 +441,16 @@ public class Server {
 		disconnect();
 	}
 
+	/**
+	 * This method is used to retrieve all the boats owned by the logged user and put them inside the listview.
+	 * 
+	 * @param os Output Stream
+	 * @param CF passed CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void retrieveBoats(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		Statement stmt = connection.createStatement();
@@ -305,6 +467,17 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is used to retrieve all the competitions and associate them to the corresponding boat in case that one is
+	 * subscripted to any of the available competitions.
+	 * 
+	 * @param os Output Stream
+	 * @param CF passed CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void retriveCompetitions(ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -341,6 +514,18 @@ public class Server {
 		disconnect();
 	}
 
+	/**
+	 * This method is used to check whether if an event is subscriptable or it has been still subscripted with another boat.
+	 * 
+	 * @param os Output Stream
+	 * @param eventID selected eventID
+	 * @param boatID selected boatID
+	 * @param CF owner CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void checkEvent(ObjectOutputStream os, Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
@@ -362,11 +547,22 @@ public class Server {
 			os.writeObject(new Message("OK"));
 			os.flush();
 		} catch (Exception e) {
-			System.err.println("sendSubscription Check-Existance Error: " + e.getMessage());
+			System.err.println("sendSubscription Check-Existence Error: " + e.getMessage());
 		}
 		disconnect();
 	}
 
+	/**
+	 * This method is used on every login to sort out the winner of a competition that is being held the current day,
+	 * it retrieve all the participants to a single competition and shuffles out a winner.
+	 * 
+	 * @param os Output Stream
+	 * @param eventID current eventID
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
+	
 	public static void getAllParticipants(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
@@ -383,6 +579,16 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is used to modify the competition attribute podium to the newly extracted podium.
+	 * 
+	 * @param id competitionID
+	 * @param podium new podium places
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void setPodium(Integer id, String podium) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
@@ -394,7 +600,17 @@ public class Server {
 		}
 		disconnect();
 	}
-
+	
+	/**
+	 * This method is used to selet a subscription of a precise boat from a precise competition, it can be done directly by the user logged in.
+	 * 
+	 * @param os Output Stream
+	 * @param eventID passed event ID
+	 * @param boatID passed boat ID
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void deleteSubscription(ObjectOutputStream os, Integer eventID, Integer boatID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
@@ -412,10 +628,20 @@ public class Server {
 			os.writeObject(new Message("NotSub"));
 			os.flush();		
 		} catch (Exception e) {
-			System.err.println("sendSubscription Check-Existance Error: " + e.getMessage());
+			System.err.println("sendSubscription Check-Existence Error: " + e.getMessage());
 		}
 		disconnect();
 	}
+
+	/**
+	 * This method can be called only by the manager who wants to delete a precise competition.
+	 * 
+	 * @param os Output Stream
+	 * @param eventID passed event ID
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void deleteEvent(ObjectOutputStream os, Integer eventID) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
@@ -423,10 +649,20 @@ public class Server {
 			PreparedStatement stmtI = connection.prepareStatement("DELETE FROM Competition WHERE ID = " + eventID + ";");
 			stmtI.executeUpdate();
 		} catch (Exception e) {
-			System.err.println("sendSubscription Check-Existance Error: " + e.getMessage());
+			System.err.println("sendSubscription Check-Existence Error: " + e.getMessage());
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when a user wants to subscribe to a precise competition.
+	 * 
+	 * @param os Output Stream
+	 * @param eventID passed event ID
+	 * @param boatID passed boat ID
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
 
 	public static void addEvent(ObjectOutputStream os, Integer eventID, Integer boatID) throws SQLException, ClassNotFoundException {
 		initializeConnection();
@@ -441,16 +677,40 @@ public class Server {
 		disconnect();
 	}
 	
+	/**
+	 * This method is called by the manager in order to add a new competition to the list and, then, allow other users to subscribe to it.
+	 * 
+	 * @param os Output Stream
+	 * @param Name competition Name
+	 * @param Prize competition Prize
+	 * @param Cost competition Subscription Cost
+	 * @param Date competition Date
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
+	
 	public static void createEvent(ObjectOutputStream os, String Name, Double Prize, Double Cost, String Date) throws SQLException, ClassNotFoundException {
 		initializeConnection();
 		Statement statement = connection.createStatement();
 		try {
-			statement.executeUpdate("INSERT INTO Competition(Name, ID, Cost, Date, WinPrice, Podium) VALUES (\"" + Name + "\"," + null + "," + Cost + "," + Date + ",\"" + Prize + "\"," + 0 + ");");
+			statement.executeUpdate("INSERT INTO Competition(Name, ID, Cost, Date, WinPrice, Podium) VALUES (\"" + Name + "\"," + null + "," + Cost + ",\"" + Date + "\",\"" + Prize + "\"," + 0 + ");");
 		} catch (Exception e) {
 			System.err.println("Insert sendSubscription Error: " + e.getMessage());
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called when a user wants to add a new boat, it checks if a boat with the same name is still into the database and
+	 * returns a string (OK, KO) whether if it is found or not into the database.
+	 * 
+	 * @param os Output Stream
+	 * @param CF owner CF
+	 * @param boatName new boat Name
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 */
 
 	public static void checkBoat(ObjectOutputStream os, String CF, String boatName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
@@ -469,6 +729,19 @@ public class Server {
 		disconnect();
 	}
 
+	/**
+	 * This method is called when a user wants to delete a boat, it checks also if the selected boat is currently subscripted to a competition, and, if yes
+	 * it shows an alert onto the user screen telling that, if he wants to delete that boat he will also unsubscribe from the subscripted competition.
+	 * 
+	 * @param os Output Stream
+	 * @param ID boat ID
+	 * @param Checker Controller
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws InterruptedException
+	 */
+	
 	public static void removeBoat(ObjectOutputStream os, Integer ID, Integer Checker) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
 		initializeConnection();
 		try {
@@ -489,6 +762,17 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is used to retrieve the object Person passing the unique identifier CF.
+	 * 
+	 * @param os Output Stream
+	 * @param CF unique user identifier CF
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 * @throws IOException Handles Input-Output Exceptions
+	 * @throws InterruptedException
+	 */
 
 	public static void retrievePerson(ObjectOutputStream os, String CF) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
 		initializeConnection();
@@ -503,15 +787,29 @@ public class Server {
 		}
 		disconnect();
 	}
+	
+	/**
+	 * This method is called whenever we wants to end the connection to the SQL Database.
+	 * 
+	 * @throws SQLException Handles SQL Errors
+	 */
 
 	public static void disconnect() throws SQLException {
 		connection.close();
 		return;
 	}
+	
+	/**
+	 * This method is the main one, which is firstly executed before all the others; it manages the Threads and the informations
+	 * written onto the console.
+	 * 
+	 * @param args All the argument passed
+	 * @throws SQLException Handles SQL Errors
+	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
+	 */
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		LinkedList<ClientHandler> clients = new LinkedList<>();
-		//LoggedUsers = new LinkedList<>();
 		ServerSocket server = null;
 		try {
 			server = new ServerSocket(PORT);
