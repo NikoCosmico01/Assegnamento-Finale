@@ -166,7 +166,7 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
-	 * @throws ParseException
+	 * @throws ParseException Parsing Exception
 	 */
 
 	public static void checkNotifications (ObjectOutputStream os, String CF) throws SQLException, ClassNotFoundException, IOException, ParseException {
@@ -416,7 +416,7 @@ public class Server {
 	 * This method is called when a user wants to check his payment history {@code Controller_History}.
 	 * 
 	 * @param os Output Stream
-	 * @param CF
+	 * @param CF Fiscal Code Passed
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
@@ -526,30 +526,37 @@ public class Server {
 	 * @throws IOException Handles Input-Output Exceptions
 	 */
 	
-	public static void checkEvent(ObjectOutputStream os, Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
+	public static String checkEvent(ObjectOutputStream os, Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
 		initializeConnection();
 		Statement statementI = connection.createStatement();
 		try {
 			ResultSet rs = statementI.executeQuery("SELECT * FROM Participants, Boat WHERE Boat.ID = Participants.ID_Boat AND Boat.CF_Owner = \"" + CF + "\"");
 			while (rs.next() == true) {
 				if (eventID == rs.getInt("ID_Competition")) {
-					os.writeObject(new Message("CSE"));
-					os.flush();
+					if (os != null) {
+						os.writeObject(new Message("CSE"));
+						os.flush();
+					}
 					disconnect();
-					return;
+					return "CompSub";
 				} else if (boatID == rs.getInt("ID_Boat")) {
-					os.writeObject(new Message("BSE"));
-					os.flush();
+					if (os != null) {
+						os.writeObject(new Message("BSE"));
+						os.flush();
+					}
 					disconnect();
-					return;
+					return "BoatSub";
 				}
 			}
-			os.writeObject(new Message("OK"));
-			os.flush();
+			if (os != null) {
+				os.writeObject(new Message("OK"));
+				os.flush();
+			}
 		} catch (Exception e) {
 			System.err.println("sendSubscription Check-Existence Error: " + e.getMessage());
 		}
 		disconnect();
+		return "OK";
 	}
 
 	/**
@@ -739,7 +746,7 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
-	 * @throws InterruptedException
+	 * @throws InterruptedException Handles Interruption Exception
 	 */
 	
 	public static void removeBoat(ObjectOutputStream os, Integer ID, Integer Checker) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {
@@ -771,7 +778,7 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
-	 * @throws InterruptedException
+	 * @throws InterruptedException Handles Interruption Exception
 	 */
 
 	public static void retrievePerson(ObjectOutputStream os, String CF) throws ClassNotFoundException, IOException, SQLException, InterruptedException  {

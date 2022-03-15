@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mar 04, 2022 alle 11:51
+-- Creato il: Mar 15, 2022 alle 09:16
 -- Versione del server: 10.4.22-MariaDB
 -- Versione PHP: 8.1.2
 
@@ -46,7 +46,8 @@ INSERT INTO `boat` (`Name`, `ID`, `CF_Owner`, `Length`) VALUES
 ('Ricchi', 24, 'ILNTRZZ', 110),
 ('Da Sottoscrivere', 30, 'ILNTRZZ', 18.9),
 ('Plova', 34, 'ILNTRZZ', 8.81),
-('AloA', 37, 'ILNTRZZ', 12);
+('AloA', 37, 'ILNTRZZ', 12),
+('Suca', 38, 'PPCNDR', 10);
 
 -- --------------------------------------------------------
 
@@ -68,7 +69,6 @@ CREATE TABLE `competition` (
 --
 
 INSERT INTO `competition` (`Name`, `ID`, `Cost`, `Date`, `WinPrice`, `Podium`) VALUES
-('The Destroyer Competition', 100, 120.9, '2022-02-14', 480, '0'),
 ('The Death Challenge', 101, 290.7, '2022-02-10', 890.9, '24-13'),
 ('Trial Competition', 102, 100, '2022-08-08', 1870.88, '0');
 
@@ -86,13 +86,6 @@ CREATE TABLE `notification` (
   `ID_Payment` smallint(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dump dei dati per la tabella `notification`
---
-
-INSERT INTO `notification` (`ID`, `stringObject`, `Description`, `remDays`, `ID_Payment`) VALUES
-(24, 'Boat Addon', 'Boat Storage Fee Needs To Be Renewed', 4, 15);
-
 -- --------------------------------------------------------
 
 --
@@ -109,9 +102,9 @@ CREATE TABLE `participants` (
 --
 
 INSERT INTO `participants` (`ID_Boat`, `ID_Competition`) VALUES
-(13, 101),
-(24, 101),
-(34, 102);
+(34, 101),
+(37, 102),
+(38, 102);
 
 -- --------------------------------------------------------
 
@@ -126,7 +119,7 @@ CREATE TABLE `paymenthistory` (
   `currDate` date NOT NULL,
   `Expiration` date DEFAULT NULL,
   `ID_Competition` smallint(6) DEFAULT NULL,
-  `Description` varchar(20) DEFAULT NULL,
+  `Description` varchar(30) DEFAULT NULL,
   `Amount` double NOT NULL,
   `PaymentMethod` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -136,8 +129,14 @@ CREATE TABLE `paymenthistory` (
 --
 
 INSERT INTO `paymenthistory` (`ID`, `CF`, `ID_Boat`, `currDate`, `Expiration`, `ID_Competition`, `Description`, `Amount`, `PaymentMethod`) VALUES
-(15, 'ILNTRZZ', 37, '2022-02-09', '2022-03-09', NULL, 'Boat Addon', 0, 'CARD That Ends With 3005'),
-(19, 'ILNTRZZ', 34, '2022-03-04', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 2386');
+(15, 'ILNTRZZ', 37, '2022-02-09', '2022-03-09', NULL, 'Boat Addon', 95.9, 'CARD That Ends With 3005'),
+(19, 'ILNTRZZ', 34, '2022-03-04', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
+(22, 'PPCNDR', NULL, '2022-03-04', '2023-03-04', NULL, 'Membership Registration', 119.9, 'IBAN That Ends With 8899'),
+(23, 'PPCNDR', 38, '2022-03-04', '2023-03-04', NULL, 'Boat Addon', 100, 'IBAN That Ends With 8899'),
+(24, 'PPCNDR', 38, '2022-03-04', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 8899'),
+(25, 'ILNTRZZ', 34, '2022-03-06', NULL, 101, 'Competition Addon', 290.7, 'CARD That Ends With 3005'),
+(26, 'ILNTRZZ', 37, '2022-03-06', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
+(27, 'ILNTRZZ', 37, '2022-03-06', '2023-03-06', NULL, 'Boat Fee Renewal', 95.9, 'IBAN That Ends With 2386');
 
 -- --------------------------------------------------------
 
@@ -161,7 +160,8 @@ CREATE TABLE `paymentmethods` (
 INSERT INTO `paymentmethods` (`ID`, `CF`, `CreditCard_ID`, `Expiration`, `CV2`, `IBAN`) VALUES
 (13, 'ILNTRZZ', '4246988520043005', '12/23', '434', 'NULL'),
 (16, 'ILNTRZZ', 'NULL', NULL, NULL, 'IT77S0300203280737722952386'),
-(17, 'MRCSTPD', '1234543256789876', '11/24', '123', 'NULL');
+(17, 'MRCSTPD', '1234543256789876', '11/24', '123', 'NULL'),
+(20, 'PPCNDR', 'NULL', 'NULL/NULL', 'NULL', 'NL77INGB8057339330542268899');
 
 -- --------------------------------------------------------
 
@@ -187,7 +187,8 @@ INSERT INTO `person` (`Name`, `Surname`, `Address`, `CF`, `UserName`, `PassWord`
 ('Carlo', 'Acutis', 'Via Della Fede 1', 'CRLCTS', 'Carlo', 'Prova', 1),
 ('Ilenia', 'Truzza', 'Via Dei Mongolspastici', 'ILNTRZZ', 'Ile', 'Prova', 0),
 ('Marco', 'Calvi', 'Via Di Sto Cavolo 10', 'MRCSTPD', 'Marcolindo', 'Prova', 0),
-('Nicolò', 'Thei', 'Via Mozzachiodi', 'NCLTHEI', 'NicoCosmico01', 'Prova', 0);
+('Nicolò', 'Thei', 'Via Mozzachiodi', 'NCLTHEI', 'NicoCosmico01', 'Prova', 0),
+('Andrea', 'Oppici', 'Via Delle Fave', 'PPCNDR', 'Andre', 'oppi', 0);
 
 --
 -- Indici per le tabelle scaricate
@@ -247,31 +248,31 @@ ALTER TABLE `person`
 -- AUTO_INCREMENT per la tabella `boat`
 --
 ALTER TABLE `boat`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT per la tabella `competition`
 --
 ALTER TABLE `competition`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT per la tabella `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT per la tabella `paymenthistory`
 --
 ALTER TABLE `paymenthistory`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT per la tabella `paymentmethods`
 --
 ALTER TABLE `paymentmethods`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Limiti per le tabelle scaricate
