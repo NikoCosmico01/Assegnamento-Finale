@@ -12,8 +12,7 @@ import Socket.Server;
 class loginTest {
 	
 	@Test
-	void testLogin() throws ClassNotFoundException, SQLException, IOException {
-		Server sucaServer = new Server();		
+	void testLogin() throws ClassNotFoundException, SQLException, IOException {		
 		String resultString = Server.checkEvent(null, 30, 101, "ILNTRZZ");
 		assertEquals("OK", resultString);
 	}

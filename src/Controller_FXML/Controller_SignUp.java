@@ -1,7 +1,6 @@
 package Controller_FXML;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import Objects.Person;
 import Socket.Client;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mar 15, 2022 alle 09:16
+-- Creato il: Mar 15, 2022 alle 21:42
 -- Versione del server: 10.4.22-MariaDB
 -- Versione PHP: 8.1.2
 
@@ -39,15 +39,15 @@ CREATE TABLE `boat` (
 --
 
 INSERT INTO `boat` (`Name`, `ID`, `CF_Owner`, `Length`) VALUES
-('Fugassa', 10, 'NCLTHEI', 10),
-('CinCion', 11, 'NCLTHEI', 14),
-('Savonarola', 12, 'MRCSTPD', 20),
-('Ghemellidi', 13, 'MRCSTPD', 18.1),
-('Ricchi', 24, 'ILNTRZZ', 110),
-('Da Sottoscrivere', 30, 'ILNTRZZ', 18.9),
-('Plova', 34, 'ILNTRZZ', 8.81),
-('AloA', 37, 'ILNTRZZ', 12),
-('Suca', 38, 'PPCNDR', 10);
+('Vittoria', 10, 'MRCSTPD', 10),
+('Vernazza', 11, 'PPCNDR', 14),
+('LaFugassa', 12, 'MRCSTPD', 20),
+('Madoche', 13, 'MRCSTPD', 18.1),
+('Alessia', 14, 'ILNTRZZ', 110),
+('Serenity', 15, 'ILNTRZZ', 18.9),
+('Julia', 16, 'ILNTRZZ', 8.81),
+('SeaPlay', 17, 'ILNTRZZ', 12),
+('SHANE', 18, 'PPCNDR', 10);
 
 -- --------------------------------------------------------
 
@@ -69,8 +69,11 @@ CREATE TABLE `competition` (
 --
 
 INSERT INTO `competition` (`Name`, `ID`, `Cost`, `Date`, `WinPrice`, `Podium`) VALUES
-('The Death Challenge', 101, 290.7, '2022-02-10', 890.9, '24-13'),
-('Trial Competition', 102, 100, '2022-08-08', 1870.88, '0');
+('The Death Challenge', 1, 290.7, '2022-03-24', 890.9, '0'),
+('Trial Competition', 2, 100, '2022-08-08', 1870.88, '0'),
+('BestBonus', 3, 390.9, '2022-03-30', 190.88, '0'),
+('World Cup', 4, 12000, '2022-05-20', 348000, '0'),
+('New Year\'s EveNT', 111, 20, '2022-12-31', 890.9, '0');
 
 -- --------------------------------------------------------
 
@@ -102,9 +105,9 @@ CREATE TABLE `participants` (
 --
 
 INSERT INTO `participants` (`ID_Boat`, `ID_Competition`) VALUES
-(34, 101),
-(37, 102),
-(38, 102);
+(15, 2),
+(16, 1),
+(17, 4);
 
 -- --------------------------------------------------------
 
@@ -129,14 +132,17 @@ CREATE TABLE `paymenthistory` (
 --
 
 INSERT INTO `paymenthistory` (`ID`, `CF`, `ID_Boat`, `currDate`, `Expiration`, `ID_Competition`, `Description`, `Amount`, `PaymentMethod`) VALUES
-(15, 'ILNTRZZ', 37, '2022-02-09', '2022-03-09', NULL, 'Boat Addon', 95.9, 'CARD That Ends With 3005'),
-(19, 'ILNTRZZ', 34, '2022-03-04', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
-(22, 'PPCNDR', NULL, '2022-03-04', '2023-03-04', NULL, 'Membership Registration', 119.9, 'IBAN That Ends With 8899'),
-(23, 'PPCNDR', 38, '2022-03-04', '2023-03-04', NULL, 'Boat Addon', 100, 'IBAN That Ends With 8899'),
-(24, 'PPCNDR', 38, '2022-03-04', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 8899'),
-(25, 'ILNTRZZ', 34, '2022-03-06', NULL, 101, 'Competition Addon', 290.7, 'CARD That Ends With 3005'),
-(26, 'ILNTRZZ', 37, '2022-03-06', NULL, 102, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
-(27, 'ILNTRZZ', 37, '2022-03-06', '2023-03-06', NULL, 'Boat Fee Renewal', 95.9, 'IBAN That Ends With 2386');
+(1, 'ILNTRZZ', 17, '2022-02-09', '2022-03-09', NULL, 'Boat Addon', 95.9, 'CARD That Ends With 3005'),
+(2, 'ILNTRZZ', 16, '2022-03-04', NULL, 2, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
+(3, 'PPCNDR', 18, '2022-03-04', '2023-03-04', NULL, 'Boat Addon', 100, 'IBAN That Ends With 8899'),
+(4, 'PPCNDR', 18, '2022-03-04', NULL, 2, 'Competition Addon', 100, 'IBAN That Ends With 8899'),
+(5, 'ILNTRZZ', 16, '2022-03-06', NULL, 1, 'Competition Addon', 290.7, 'CARD That Ends With 3005'),
+(6, 'ILNTRZZ', 17, '2022-03-06', NULL, 2, 'Competition Addon', 100, 'IBAN That Ends With 2386'),
+(7, 'ILNTRZZ', 17, '2022-03-06', '2023-03-06', NULL, 'Boat Fee Renewal', 95.9, 'IBAN That Ends With 2386'),
+(8, 'PPCNDR', NULL, '2022-03-04', '2023-03-04', NULL, 'Membership Registration', 119.9, 'IBAN That Ends With 8899'),
+(224, 'ILNTRZZ', 17, '2022-03-15', NULL, 4, 'Competition Addon', 12000, 'IBAN That Ends With 2386'),
+(225, 'ILNTRZZ', 15, '2022-03-15', NULL, 2, 'Competition Addon', 100, 'CARD That Ends With 3005'),
+(226, 'ILNTRZZ', 16, '2022-03-15', NULL, 1, 'Competition Addon', 290.7, 'CARD That Ends With 3005');
 
 -- --------------------------------------------------------
 
@@ -158,10 +164,10 @@ CREATE TABLE `paymentmethods` (
 --
 
 INSERT INTO `paymentmethods` (`ID`, `CF`, `CreditCard_ID`, `Expiration`, `CV2`, `IBAN`) VALUES
-(13, 'ILNTRZZ', '4246988520043005', '12/23', '434', 'NULL'),
-(16, 'ILNTRZZ', 'NULL', NULL, NULL, 'IT77S0300203280737722952386'),
-(17, 'MRCSTPD', '1234543256789876', '11/24', '123', 'NULL'),
-(20, 'PPCNDR', 'NULL', 'NULL/NULL', 'NULL', 'NL77INGB8057339330542268899');
+(1, 'ILNTRZZ', '4246988520043005', '12/23', '434', 'NULL'),
+(2, 'ILNTRZZ', 'NULL', NULL, NULL, 'IT77S0300203280737722952386'),
+(3, 'MRCSTPD', '1234543256789876', '11/24', '123', 'NULL'),
+(4, 'PPCNDR', 'NULL', NULL, 'NULL', 'NL77INGB8057339330542268899');
 
 -- --------------------------------------------------------
 
@@ -184,11 +190,11 @@ CREATE TABLE `person` (
 --
 
 INSERT INTO `person` (`Name`, `Surname`, `Address`, `CF`, `UserName`, `PassWord`, `Manager`) VALUES
-('Carlo', 'Acutis', 'Via Della Fede 1', 'CRLCTS', 'Carlo', 'Prova', 1),
-('Ilenia', 'Truzza', 'Via Dei Mongolspastici', 'ILNTRZZ', 'Ile', 'Prova', 0),
+('Carlo', 'Acutis', 'Via Della Fede 1/A', 'CRLCTS', 'Carlo', 'Prova', 1),
+('Ilenia', 'Truzza', 'Via Dei Melegari 28/B', 'ILNTRZZ', 'Ile', 'Prova', 0),
 ('Marco', 'Calvi', 'Via Di Sto Cavolo 10', 'MRCSTPD', 'Marcolindo', 'Prova', 0),
-('Nicolò', 'Thei', 'Via Mozzachiodi', 'NCLTHEI', 'NicoCosmico01', 'Prova', 0),
-('Andrea', 'Oppici', 'Via Delle Fave', 'PPCNDR', 'Andre', 'oppi', 0);
+('Nicolò', 'Thei', 'Via Mozzachiodi 8/F', 'NCLTHEI', 'NicoCosmico01', 'Prova', 1),
+('Andrea', 'Oppici', 'Via Delle Fave 51', 'PPCNDR', 'Andre', 'Prova', 0);
 
 --
 -- Indici per le tabelle scaricate
@@ -198,7 +204,8 @@ INSERT INTO `person` (`Name`, `Surname`, `Address`, `CF`, `UserName`, `PassWord`
 -- Indici per le tabelle `boat`
 --
 ALTER TABLE `boat`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `CF_Owner` (`CF_Owner`);
 
 --
 -- Indici per le tabelle `competition`
@@ -225,8 +232,8 @@ ALTER TABLE `participants`
 --
 ALTER TABLE `paymenthistory`
   ADD PRIMARY KEY (`ID`),
-  ADD KEY `ID_Boat` (`ID_Boat`),
-  ADD KEY `ID_Competition` (`ID_Competition`);
+  ADD KEY `paymenthistory_ibfk_1` (`ID_Boat`),
+  ADD KEY `paymenthistory_ibfk_2` (`ID_Competition`);
 
 --
 -- Indici per le tabelle `paymentmethods`
@@ -254,7 +261,7 @@ ALTER TABLE `boat`
 -- AUTO_INCREMENT per la tabella `competition`
 --
 ALTER TABLE `competition`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT per la tabella `notification`
@@ -266,7 +273,7 @@ ALTER TABLE `notification`
 -- AUTO_INCREMENT per la tabella `paymenthistory`
 --
 ALTER TABLE `paymenthistory`
-  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `ID` smallint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
 
 --
 -- AUTO_INCREMENT per la tabella `paymentmethods`
@@ -277,6 +284,12 @@ ALTER TABLE `paymentmethods`
 --
 -- Limiti per le tabelle scaricate
 --
+
+--
+-- Limiti per la tabella `boat`
+--
+ALTER TABLE `boat`
+  ADD CONSTRAINT `boat_ibfk_1` FOREIGN KEY (`CF_Owner`) REFERENCES `person` (`CF`);
 
 --
 -- Limiti per la tabella `notification`
@@ -295,8 +308,8 @@ ALTER TABLE `participants`
 -- Limiti per la tabella `paymenthistory`
 --
 ALTER TABLE `paymenthistory`
-  ADD CONSTRAINT `paymenthistory_ibfk_1` FOREIGN KEY (`ID_Boat`) REFERENCES `boat` (`ID`) ON DELETE CASCADE,
-  ADD CONSTRAINT `paymenthistory_ibfk_2` FOREIGN KEY (`ID_Competition`) REFERENCES `competition` (`ID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `paymenthistory_ibfk_1` FOREIGN KEY (`ID_Boat`) REFERENCES `boat` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `paymenthistory_ibfk_2` FOREIGN KEY (`ID_Competition`) REFERENCES `competition` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

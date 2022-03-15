@@ -67,7 +67,7 @@
       <Button layoutX="718.0" layoutY="406.0" mnemonicParsing="false" onAction="#addEvent" text="New Event" />
       <Button layoutX="490.0" layoutY="480.0" mnemonicParsing="false" onAction="#Remove" style="-fx-background-color: RED;" text="Remove" textFill="WHITE" />
       <DatePicker fx:id="newEventDate" layoutX="680.0" layoutY="274.0" prefHeight="26.0" prefWidth="150.0" promptText="Event Date" />
-      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="107.0" layoutY="325.0" prefHeight="18.0" prefWidth="337.0">
+      <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="123.0" layoutY="483.0" prefHeight="18.0" prefWidth="337.0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

@@ -524,6 +524,7 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
+	 * @return Test Usage
 	 */
 	
 	public static String checkEvent(ObjectOutputStream os, Integer eventID, Integer boatID, String CF) throws ClassNotFoundException, SQLException, IOException {
