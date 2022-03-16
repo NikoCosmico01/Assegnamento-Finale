@@ -60,23 +60,30 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
+	 * @return Used For Test
 	 */
 	
-	public static void checkLogin(ObjectOutputStream os, String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
+	public static String checkLogin(ObjectOutputStream os, String userName, String passWord) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\" AND PassWord = \"" + passWord + "\";");
 			if (rs.next()) {
+				if (os != null) {
 				os.writeObject(new Person(rs.getString("Name"),rs.getString("Surname"),rs.getString("Address"),rs.getString("CF"), userName, passWord, rs.getInt("Manager")));
 				os.flush();
+				}
+				return "OK";
 			} else {
+				if (os != null) {
 				os.writeObject(null);
 				os.flush();
+				}
 			}
 		} catch (SQLException e) {
 			System.out.println("checkLogin Error: " + e.getMessage());
 		}
 		disconnect();
+		return "KO";
 	}
 
 	/**
@@ -88,23 +95,30 @@ public class Server {
 	 * @throws SQLException Handles SQL Errors
 	 * @throws ClassNotFoundException Handles The Non-Existence of A Class
 	 * @throws IOException Handles Input-Output Exceptions
+	 * @return Used For Test
 	 */
 	
-	public static void checkUserExistence(ObjectOutputStream os, String userName) throws SQLException, ClassNotFoundException, IOException {
+	public static String checkUserExistence(ObjectOutputStream os, String userName) throws SQLException, ClassNotFoundException, IOException {
 		initializeConnection();
 		try { 
 			ResultSet rs = statement.executeQuery("SELECT * FROM Person WHERE UserName =\"" + userName + "\";");
 			if (rs.next()) {
+				if (os != null) {
 				os.writeByte(1);
 				os.flush();
+				}
+				return "OK";
 			} else {
+				if (os != null) {
 				os.writeByte(0);
 				os.flush();
+				}
 			}
 		} catch (SQLException e) {
 			System.out.println("checkUserExistence Error: " + e.getMessage());
 		}
 		disconnect();
+		return "KO";
 	}
 	
 	/**
